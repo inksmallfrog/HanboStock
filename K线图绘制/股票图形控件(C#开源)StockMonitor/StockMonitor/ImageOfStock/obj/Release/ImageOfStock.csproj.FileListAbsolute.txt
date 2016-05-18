@@ -1,0 +1,14 @@
+F:\google下载\看盘软件\c#读取大智慧数据开发个性化图表（k线等）源码及图表控件源码和教程\股票图形控件(C#开源，2010年6月11日版)StockMonitor\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.dll
+F:\google下载\看盘软件\c#读取大智慧数据开发个性化图表（k线等）源码及图表控件源码和教程\股票图形控件(C#开源，2010年6月11日版)StockMonitor\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.pdb
+F:\google下载\看盘软件\c#读取大智慧数据开发个性化图表（k线等）源码及图表控件源码和教程\股票图形控件(C#开源，2010年6月11日版)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.dll
+F:\google下载\看盘软件\c#读取大智慧数据开发个性化图表（k线等）源码及图表控件源码和教程\股票图形控件(C#开源，2010年6月11日版)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.pdb
+C:\Users\泽棋\Desktop\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.dll
+C:\Users\泽棋\Desktop\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.pdb
+C:\Users\泽棋\Desktop\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.csprojResolveAssemblyReference.cache
+C:\Users\泽棋\Desktop\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.dll
+C:\Users\泽棋\Desktop\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.pdb
+C:\Users\fin\Desktop\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.dll
+C:\Users\fin\Desktop\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.pdb
+C:\Users\fin\Desktop\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.csprojResolveAssemblyReference.cache
+C:\Users\fin\Desktop\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.dll
+C:\Users\fin\Desktop\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.pdb

@@ -1,0 +1,59 @@
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\obj\Debug\main.csprojResolveAssemblyReference.cache
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\obj\Debug\main.Form1.resources
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\obj\Debug\main.Form_compiler.resources
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\obj\Debug\main.Properties.Resources.resources
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\obj\Debug\main.csproj.GenerateResource.Cache
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\main.exe.config
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\main.exe
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\main.pdb
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\ImageOfStock.dll
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\MySql.Data.dll
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\Newtonsoft.Json.dll
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\StockMonitor.exe
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\ImageOfStock.pdb
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\StockMonitor.pdb
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\bin\Debug\Newtonsoft.Json.xml
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\obj\Debug\main.exe
+C:\Users\泽棋\Documents\Visual Studio 2015\Projects\main\main\obj\Debug\main.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\main.exe.config
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.exe
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\main.exe
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\main.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\ImageOfStock.dll
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\MySql.Data.dll
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\Newtonsoft.Json.dll
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\StockMonitor.exe
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\ImageOfStock.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\StockMonitor.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\Newtonsoft.Json.xml
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.csprojResolveAssemblyReference.cache
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.Form1.resources
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.Form_compiler.resources
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.Properties.Resources.resources
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.csproj.GenerateResource.Cache
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\main.exe.manifest
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Debug\main.application
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.exe.manifest
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Debug\main.application
+E:\Code\C#\韩波炒股\main\main\bin\Debug\main.exe.config
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.exe
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.pdb
+E:\Code\C#\韩波炒股\main\main\bin\Debug\main.exe.manifest
+E:\Code\C#\韩波炒股\main\main\bin\Debug\main.application
+E:\Code\C#\韩波炒股\main\main\bin\Debug\main.exe
+E:\Code\C#\韩波炒股\main\main\bin\Debug\main.pdb
+E:\Code\C#\韩波炒股\main\main\bin\Debug\ImageOfStock.dll
+E:\Code\C#\韩波炒股\main\main\bin\Debug\Newtonsoft.Json.dll
+E:\Code\C#\韩波炒股\main\main\bin\Debug\ImageOfStock.pdb
+E:\Code\C#\韩波炒股\main\main\bin\Debug\Newtonsoft.Json.xml
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.csprojResolveAssemblyReference.cache
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.Properties.Resources.resources
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.csproj.GenerateResource.Cache
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.exe.manifest
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.application
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.DoubleBufferListView.resources
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.MainWindow.resources
+E:\Code\C#\韩波炒股\main\main\bin\Debug\DBConnector.dll
+E:\Code\C#\韩波炒股\main\main\bin\Debug\DBConnector.pdb
+E:\Code\C#\韩波炒股\main\main\obj\Debug\main.Form2.resources

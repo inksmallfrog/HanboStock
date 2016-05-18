@@ -1,0 +1,34 @@
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\main.exe.config
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\main.exe
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\main.pdb
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\ImageOfStock.dll
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\MySql.Data.dll
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\Newtonsoft.Json.dll
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\StockMonitor.exe
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\ImageOfStock.pdb
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\StockMonitor.pdb
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\bin\Release\Newtonsoft.Json.xml
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\obj\Release\main.csprojResolveAssemblyReference.cache
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\obj\Release\main.Form1.resources
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\obj\Release\main.Form_compiler.resources
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\obj\Release\main.Properties.Resources.resources
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\obj\Release\main.csproj.GenerateResource.Cache
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\obj\Release\main.exe
+C:\Users\泽棋\documents\visual studio 2015\Projects\main\main\obj\Release\main.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\main.exe.config
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Release\main.exe
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Release\main.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Release\main.csprojResolveAssemblyReference.cache
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Release\main.Form1.resources
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Release\main.Form_compiler.resources
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Release\main.Properties.Resources.resources
+C:\Users\fin\Desktop\韩波炒股\main\main\obj\Release\main.csproj.GenerateResource.Cache
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\main.exe
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\main.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\ImageOfStock.dll
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\MySql.Data.dll
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\Newtonsoft.Json.dll
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\StockMonitor.exe
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\ImageOfStock.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\StockMonitor.pdb
+C:\Users\fin\Desktop\韩波炒股\main\main\bin\Release\Newtonsoft.Json.xml

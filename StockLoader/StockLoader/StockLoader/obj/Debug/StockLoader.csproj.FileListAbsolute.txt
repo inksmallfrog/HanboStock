@@ -1,0 +1,1 @@
+E:\Code\C#\韩波炒股\StockLoader\StockLoader\StockLoader\bin\Debug\StockLoader.exe.config

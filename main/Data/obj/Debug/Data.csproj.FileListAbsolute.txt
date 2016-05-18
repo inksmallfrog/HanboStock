@@ -1,0 +1,7 @@
+E:\Code\C#\韩波炒股\main\DBConnector\bin\Debug\DBConnector.dll
+E:\Code\C#\韩波炒股\main\DBConnector\bin\Debug\DBConnector.pdb
+E:\Code\C#\韩波炒股\main\DBConnector\obj\Debug\DBConnector.dll
+E:\Code\C#\韩波炒股\main\DBConnector\obj\Debug\DBConnector.pdb
+E:\Code\C#\韩波炒股\main\DBConnector\obj\Debug\Data.csprojResolveAssemblyReference.cache
+E:\Code\C#\韩波炒股\main\DBConnector\bin\Debug\Newtonsoft.Json.dll
+E:\Code\C#\韩波炒股\main\DBConnector\bin\Debug\Newtonsoft.Json.xml

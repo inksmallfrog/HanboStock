@@ -1,0 +1,10 @@
+bin\Release\ImageOfStock.dll
+bin\Release\ImageOfStock.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\ImageOfStock.dll
+obj\Release\ImageOfStock.pdb
+bin\Debug\ImageOfStock.dll
+bin\Debug\ImageOfStock.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\ImageOfStock.dll
+obj\Debug\ImageOfStock.pdb

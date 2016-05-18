@@ -1,0 +1,5 @@
+D:\Work\StockMonitor\ImageOfStock\obj\Release\ResolveAssemblyReference.cache
+D:\Work\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.dll
+D:\Work\StockMonitor\ImageOfStock\bin\Release\ImageOfStock.pdb
+D:\Work\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.dll
+D:\Work\StockMonitor\ImageOfStock\obj\Release\ImageOfStock.pdb
