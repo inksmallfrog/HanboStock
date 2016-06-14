@@ -1,0 +1,5 @@
+E:\Code\C#\韩波炒股\main\Compiler\bin\Debug\Compiler.dll
+E:\Code\C#\韩波炒股\main\Compiler\bin\Debug\Compiler.pdb
+E:\Code\C#\韩波炒股\main\Compiler\obj\Debug\Compiler.csprojResolveAssemblyReference.cache
+E:\Code\C#\韩波炒股\main\Compiler\obj\Debug\Compiler.dll
+E:\Code\C#\韩波炒股\main\Compiler\obj\Debug\Compiler.pdb

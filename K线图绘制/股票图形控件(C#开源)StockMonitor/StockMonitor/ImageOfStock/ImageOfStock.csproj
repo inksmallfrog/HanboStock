@@ -46,13 +46,93 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChartGraph.cs">
+    <Compile Include="DetailPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DetailPanel.Designer.cs">
+      <DependentUpon>DetailPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalInfo.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ChartGraph.Designer.cs">
-      <DependentUpon>ChartGraph.cs</DependentUpon>
+    <Compile Include="GlobalInfo.Designer.cs">
+      <DependentUpon>GlobalInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KLineGraph.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="KLineGraph.Designer.cs">
+      <DependentUpon>KLineGraph.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KLinePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KLinePanel.Designer.cs">
+      <DependentUpon>KLinePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MultiList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MultiList.Designer.cs">
+      <DependentUpon>MultiList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PerbidList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PerbidList.Designer.cs">
+      <DependentUpon>PerbidList.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleTimeLineGraph.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SimpleTimeLineGraph.Designer.cs">
+      <DependentUpon>SimpleTimeLineGraph.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SingleGraph.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SingleGraph.Designer.cs">
+      <DependentUpon>SingleGraph.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StocksList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StocksList.Designer.cs">
+      <DependentUpon>StocksList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TimeLineGraph.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TimeLineGraph.Designer.cs">
+      <DependentUpon>TimeLineGraph.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DetailPanel.resx">
+      <DependentUpon>DetailPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KLinePanel.resx">
+      <DependentUpon>KLinePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MultiList.resx">
+      <DependentUpon>MultiList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimpleTimeLineGraph.resx">
+      <DependentUpon>SimpleTimeLineGraph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SingleGraph.resx">
+      <DependentUpon>SingleGraph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TimeLineGraph.resx">
+      <DependentUpon>TimeLineGraph.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\main\Data\Dao.csproj">
+      <Project>{d99a9131-4724-4e62-adb5-653e4cdac10c}</Project>
+      <Name>Dao</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

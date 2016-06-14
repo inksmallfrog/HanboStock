@@ -5,3 +5,10 @@ E:\Code\C#\韩波炒股\main\DBConnector\obj\Debug\DBConnector.pdb
 E:\Code\C#\韩波炒股\main\DBConnector\obj\Debug\Data.csprojResolveAssemblyReference.cache
 E:\Code\C#\韩波炒股\main\DBConnector\bin\Debug\Newtonsoft.Json.dll
 E:\Code\C#\韩波炒股\main\DBConnector\bin\Debug\Newtonsoft.Json.xml
+E:\Code\C#\韩波炒股\main\Data\bin\Debug\Data.dll
+E:\Code\C#\韩波炒股\main\Data\bin\Debug\Data.pdb
+E:\Code\C#\韩波炒股\main\Data\bin\Debug\Newtonsoft.Json.dll
+E:\Code\C#\韩波炒股\main\Data\bin\Debug\Newtonsoft.Json.xml
+E:\Code\C#\韩波炒股\main\Data\obj\Debug\Data.csprojResolveAssemblyReference.cache
+E:\Code\C#\韩波炒股\main\Data\obj\Debug\Data.dll
+E:\Code\C#\韩波炒股\main\Data\obj\Debug\Data.pdb

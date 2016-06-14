@@ -48,9 +48,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DBConnector\Data.csproj">
+    <ProjectReference Include="..\Data\Dao.csproj">
       <Project>{d99a9131-4724-4e62-adb5-653e4cdac10c}</Project>
-      <Name>Data</Name>
+      <Name>Dao</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "main", "main\main.csproj", "{3610A245-9E76-462E-9B7F-543A016BD58E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockMonitor", "main\StockMonitor.csproj", "{3610A245-9E76-462E-9B7F-543A016BD58E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageOfStock", "..\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\ImageOfStock.csproj", "{2344FB74-6A3D-4611-8165-5441AD65BF94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "DBConnector\Data.csproj", "{D99A9131-4724-4E62-ADB5-653E4CDAC10C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dao", "Data\Dao.csproj", "{D99A9131-4724-4E62-ADB5-653E4CDAC10C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{3D1459EA-C79A-4AA6-B18C-F03C8E9D2BF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compiler", "Compiler\Compiler.csproj", "{E81E4E69-E7B6-4E1D-A742-77936AAD04FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCompiler", "TestCompiler\TestCompiler.csproj", "{4346167F-E8BC-463B-B577-3490065ED1BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +31,14 @@ Global
 		{D99A9131-4724-4E62-ADB5-653E4CDAC10C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D99A9131-4724-4E62-ADB5-653E4CDAC10C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D99A9131-4724-4E62-ADB5-653E4CDAC10C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D1459EA-C79A-4AA6-B18C-F03C8E9D2BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D1459EA-C79A-4AA6-B18C-F03C8E9D2BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D1459EA-C79A-4AA6-B18C-F03C8E9D2BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D1459EA-C79A-4AA6-B18C-F03C8E9D2BF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E81E4E69-E7B6-4E1D-A742-77936AAD04FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E81E4E69-E7B6-4E1D-A742-77936AAD04FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E81E4E69-E7B6-4E1D-A742-77936AAD04FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E81E4E69-E7B6-4E1D-A742-77936AAD04FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4346167F-E8BC-463B-B577-3490065ED1BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4346167F-E8BC-463B-B577-3490065ED1BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4346167F-E8BC-463B-B577-3490065ED1BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4346167F-E8BC-463B-B577-3490065ED1BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

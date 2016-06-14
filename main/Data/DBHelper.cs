@@ -10,13 +10,15 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace Data
+using Config.GlobalConfig;
+
+namespace Dao
 {
     public class DBHelper
     {
         //使用连建池帮助连接
         private static string conStr = "server=localhost;" +
-                                      "Initial Catalog=" + ProgramConfig.DBConfig.DBName + ";" +
+                                      "Initial Catalog=" + DBConfig.DBName + ";" +
                                       "integrated security=SSPI";
         private static string conAsMasterStr = "Server=localhost;Integrated security=SSPI;database=master";
 
@@ -51,7 +53,7 @@ namespace Data
 
         private static bool IsExistsDB()
         {
-            string sql = "SELECT * FROM sys.databases WHERE name='" + ProgramConfig.DBConfig.DBName + "'";
+            string sql = "SELECT * FROM sys.databases WHERE name='" + DBConfig.DBName + "'";
             return (ExecuteSqlGetSingle(sql, true) != null);
         }
 
@@ -66,7 +68,7 @@ namespace Data
                                        "SIZE = 10MB, " +
                                        "MAXSIZE = 50MB, " +
                                        "FILEGROWTH = 10%)", 
-                                       ProgramConfig.DBConfig.DBName, ProgramConfig.DBConfig.DBPath);
+                                       DBConfig.DBName, DBConfig.DBPath);
             try {
                 ExecuteSql(sql, true);
             }
@@ -83,7 +85,7 @@ namespace Data
             string sql = "USE MASTER";
             sqls.Add(sql);
             sql = "DECLARE @dbname SYSNAME " +
-                    "SET @dbname = '" + ProgramConfig.DBConfig.DBName + "' " +
+                    "SET @dbname = '" + DBConfig.DBName + "' " +
                     "DECLARE @s NVARCHAR(1000) " +
                     "DECLARE tb CURSOR LOCAL " +
                     "FOR " +
@@ -100,7 +102,7 @@ namespace Data
                     "CLOSE tb " +
                     "DEALLOCATE tb ";
             sqls.Add(sql);
-            sql = "Drop database " + ProgramConfig.DBConfig.DBName;
+            sql = "Drop database " + DBConfig.DBName;
             sqls.Add(sql);
             try
             {
@@ -199,7 +201,7 @@ namespace Data
             StreamReader sr = null;
             try
             {
-                sr = new StreamReader(ProgramConfig.DBConfig.InitStocksListFile, Encoding.UTF8);
+                sr = new StreamReader(DBConfig.InitStocksListFile, Encoding.UTF8);
             }
             catch (System.IO.FileNotFoundException ex)
             {
@@ -351,7 +353,6 @@ namespace Data
                         connection.Close();
                         throw e;
                     }
-
                 }
             }
         }
@@ -411,19 +412,11 @@ namespace Data
         //==============================================================================================
         //单次访问
 
-        /*public void RemoveStockCode(DataDefine.StockCode stock)
+        public static void RemoveStockCode(String stockId)
         {
-            string sql_delete = "DELETE FROM stocksCode WHERE id = " + stock.stockId + ";";
-            SqlCommand cmd_delete = new SqlCommand(sql_delete, conn);
-            try
-            {
-                cmd_delete.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }*/
+            string sql_delete = "DELETE FROM stocksCode WHERE stockId = " + stockId + ";";
+            ExecuteSql(sql_delete);
+        }
         //------------------------------------------------------------
         //读
 
@@ -454,15 +447,32 @@ namespace Data
             return result.Tables[0];
         }
 
-        /*public static int GetNewestHistoryYear(string stockId)
+        public static DataRow GetStockRealTime(String stockId)
+        {
+            DataTable realtime = new DataTable();
+
+            string sql = "SELECT " +
+                         "stocksRealtime.stockId, stocksRealtime.name, CONVERT(char(10), date,126) date, time, openP, closeP, price, high, " +
+                         "low, volume, turnover, status, ask1Price, ask1Vol, bid1Price, bid1Vol, ask2Price, ask2Vol, " +
+                         "bid2Price, bid2Vol, ask3Price, ask3Vol, bid3Price, bid3Vol, ask4Price, ask4Vol, bid4Price, bid4Vol, " +
+                         "ask5Price, ask5Vol, bid5Price, bid5Vol " +
+                         "FROM stocksRealtime " +
+                         "WHERE stocksRealtime.stockId=" + stockId;
+
+            DataSet result = ExecuteSqlGetDataSet(sql);
+
+            return result.Tables[0].Rows[0];
+        }
+
+        public static String GetNewestHistoryDate(string stockId)
         {
             string sql = "SELECT TOP 1 date " +
                          "FROM stocksHistory " +
                          "WHERE stockId = " + stockId + " " +
                          "ORDER BY date DESC;";
             object result = ExecuteSqlGetSingle(sql);
-            return (result != null) ? int.Parse(result.ToString().Substring(0, 4)) : ProgramConfig.StockConfig.OldestYear + 1;
-        }*/
+            return (result != null) ? result.ToString() : "";
+        }
 
         public static string GetNewestPerbidTime(string stockId)
         {
@@ -471,7 +481,7 @@ namespace Data
                          "WHERE stockId = " + stockId + " " +
                          "ORDER BY time DESC;";
             object result = ExecuteSqlGetSingle(sql);
-            return (result != null) ? result.ToString() : "09:00:00";
+            return (result != null) ? result.ToString() : "09:20:00";
         }
 
         public static DataTable GetHistories(string stockId)
@@ -510,6 +520,7 @@ namespace Data
         {
             string sql = "DELETE FROM stocksRealtime;";
             ExecuteSql(sql);
+            Thread.Sleep(100);
             sql = "INSERT INTO " +
                   "stocksRealtime " +
                   "SELECT " +
@@ -535,18 +546,22 @@ namespace Data
             ExecuteSqlWithDataTable(sql, "@NewStocksHistory", histories, "stockHistory");
         }
 
-        public static void CleanOldPerbidData(string lastTradeDate)
+        public static void CleanOldPerbidData(string currentTradeDate)
         {
             string sql = "DELETE FROM stocksPerbid " + 
-                         "WHERE NOT EXISTS ( " + 
+                         "WHERE EXISTS ( " + 
                          "                     SELECT TOP 1 stockId " + 
                          "                     FROM stocksPerbid " + 
-                         "                     WHERE date = '" + lastTradeDate + "' " + 
+                         "                     WHERE date < '" + currentTradeDate + "' " + 
                          "                 );";
             ExecuteSql(sql);
         }
 
         public static void InsertIntoPerbid(DataTable stockPerbid){
+            if (stockPerbid.Rows.Count == 0)
+            {
+                return;
+            }
             string sql = "INSERT INTO stocksPerbid " +
                             "SELECT " +
                             "stockId, date, time, " +
@@ -559,7 +574,10 @@ namespace Data
                             "                   AND   stocksPerbid.time = nt.time " +
                             "                 );";
             try{
-                ExecuteSqlWithDataTable(sql, "@NewStocksPerbid", stockPerbid, "stockPerbid");
+                lock (perBidsLock)
+                {
+                    ExecuteSqlWithDataTable(sql, "@NewStocksPerbid", stockPerbid, "stockPerbid");
+                }
             }
             catch (SqlException ex)
             {

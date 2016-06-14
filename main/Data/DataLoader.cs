@@ -5,45 +5,199 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Data;
-using System.Net;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
 
-namespace Data
+using Dao.DataAPI;
+using Config.GlobalConfig;
+
+namespace Dao
 {
-    public class DataLoader
+    //public class DataLoader
+    //{
+    //    private static RoutineLoader routineLoader = new RoutineLoader();
+    //    private static SingleLoader singleLoader = new SingleLoader();
+
+    //    public static void InvokeRoutingReader()
+    //    {
+    //        routineLoader.Start();
+    //    }
+
+    //    public static void LoadRealTimeList()
+    //    {
+    //        routineLoader.Load();
+    //    }
+
+    //    public static DataTable GetRealTimeList()
+    //    {
+    //        return routineLoader.RealTimeList;
+    //    }
+
+    //    public static void InvokeSingleLoader(string stockId)
+    //    {
+    //        singleLoader.StockId = stockId;
+    //        singleLoader.Start();
+    //    }
+
+    //    public static void StopSingleLoader()
+    //    {
+    //        singleLoader.Stop();
+    //    }
+
+    //    public static DataTable GetSingleHistories()
+    //    {
+    //        return singleLoader.Histories;
+    //    }
+
+    //    public static DataTable GetSinglePerbid()
+    //    {
+    //        return singleLoader.Perbid;
+    //    }
+
+    //    public static DataTable GetSinglePerminut()
+    //    {
+    //        return singleLoader.Perminut;
+    //    }
+
+    //    public static void InvokeMultipleReader(List<string> stocksId)
+    //    {
+            
+    //    }
+
+    //    public static void StopMultipleReader()
+    //    {
+
+    //    }
+    //}
+
+    public class RoutineLoader
     {
-        private static SpecialLoader spLoader = new SpecialLoader();
-        private static MultipleLoader mtLoader = new MultipleLoader();
+        private Timer routineLoadTimer;
+        private bool isRunning;
+        //private Object objLock = new Object();
 
-        public static void InvokeSpecialLoader(string stockId)
+        public RoutineLoader()
         {
-            spLoader.StockId = stockId;
-            spLoader.Start();
+            routineLoadTimer = new Timer(new TimerCallback(ThreadCallBack), null, Timeout.Infinite, 2000);
+            isRunning = false;
         }
 
-        public static void StopSpecialLoader()
+        public void Start()
         {
-            spLoader.Stop();
+            if (isRunning)
+            {
+                return;
+            }
+            isRunning = true;
+            if (WebConfig.ConnectMode)
+            {
+                ReadRealTime();
+            }
+
+            if (!WebConfig.ConnectMode)
+            {
+                ReadRealTimeFromDB();
+            }
+
+            DBHelper.CleanOldPerbidData(GlobalData.StocksTable.Select("stockId='1000001'")[0]["date"].ToString());
+            routineLoadTimer.Change(3000, 3000);
         }
 
-        public static void InvokeMultipleLoader(List<string> stocksId)
+        public void ReadNow()
         {
+            if (WebConfig.ConnectMode)
+            {
+                ReadRealTime();
+            }
 
+            if (!WebConfig.ConnectMode)
+            {
+                ReadRealTimeFromDB();
+            }
         }
 
-        public static void StopInvokeLoader()
+        public void Stop()
         {
+            isRunning = false;
+            routineLoadTimer.Change(Timeout.Infinite, 2000);
+        }
 
+        public void Load()
+        {
+            ReadRealTime();
+        }
+
+        private void ThreadCallBack(Object threadLock)
+        {
+            if (!GlobalData.IsTradeTime() || !WebConfig.ConnectMode)
+            {
+                return;
+            }
+            ReadRealTime();
+        }
+
+        private void ReadRealTime()
+        {
+            DataTable bufferTable = DataDefine.GetNewStocksRealtimeTable();
+            DataAPIFactory.GetDataAPI(APIConfig.ApiType).GetRealTimeTable(bufferTable, GlobalData.CurrentShowList);
+            if (Config.GlobalConfig.WebConfig.ConnectMode)
+            {
+                GlobalData.StocksTable = bufferTable;
+                GlobalData.LastTradeTime = TimeSpan.Parse(bufferTable.Rows[0]["time"].ToString());
+                GlobalData.LastTradeDate = DateTime.Parse(bufferTable.Rows[0]["date"].ToString());
+            }
+            
+        }
+
+        private void ReadRealTimeFromDB()
+        {
+            GlobalData.StocksTable = DBHelper.GetRealtime();
+            GlobalData.LastTradeTime = TimeSpan.Parse(GlobalData.StocksTable.Rows[0]["time"].ToString());
+            GlobalData.LastTradeDate = DateTime.Parse(GlobalData.StocksTable.Rows[0]["date"].ToString());
         }
     }
 
-    public class SpecialLoader
+    public class SingleLoader
     {
+        private Timer singleLoadTimer;
+        private bool isRunning;
         private string stockId;
         private bool stockIdChanged;
-        private Timer perBidsLoadTimer;
+        private String lastMinutTime;
+
+        private DataRow current;
+        public DataRow Current
+        {
+            get
+            {
+                return current;
+            }
+        }
+
+        private DataTable histories;
+        public DataTable Histories
+        {
+            get
+            {
+                return histories;
+            }
+        }
+
+        private DataTable perbid;
+        public DataTable Perbid
+        {
+            get
+            {
+                return perbid;
+            }
+        }
+
+        private DataTable perminut;
+        public DataTable Perminut
+        {
+            get
+            {
+                return perminut;
+            }
+        }
 
         public string StockId
         {
@@ -57,68 +211,158 @@ namespace Data
             }
         }
 
-        public SpecialLoader()
+        public SingleLoader()
         {
-            perBidsLoadTimer = new Timer(new TimerCallback(ThreadCallBack), null, Timeout.Infinite, 2000);
+            singleLoadTimer = new Timer(new TimerCallback(ThreadCallBack), null, Timeout.Infinite, 2000);
+            isRunning = false;
             stockIdChanged = true;
+            stockId = "-1";
+            lastMinutTime = "09:30";
+            current = DataDefine.GetNewStocksRealtimeTable().NewRow();
+            perminut = DataDefine.GetNewStocksPerminutTable();
         }
 
         public void Start()
         {
-            if (!ProgramConfig.WebConfig.ConnectMode)
+            if (isRunning)
             {
                 return;
             }
+            isRunning = true;
             if (stockIdChanged)
             {
-
+                perminut.Clear();
+                LoadCurrent();
                 LoadHistory();
-
                 LoadPerbid();
-
+                LoadPerminut();
                 stockIdChanged = false;
             }
-            perBidsLoadTimer.Change(2000, 2000);
+            singleLoadTimer.Change(6000, 6000);
         }
 
         public void Stop()
         {
-            perBidsLoadTimer.Change(Timeout.Infinite, 2000);
+            isRunning = false;
+            singleLoadTimer.Change(Timeout.Infinite, 2000);
         }
 
         private void ThreadCallBack(Object threadLock)
         {
-            if (!CommonData.IsTradeTime())
+            if (!GlobalData.IsTradeTime() || !WebConfig.ConnectMode)
             {
                 return;
             }
+            LoadCurrent();
             LoadPerbid();
+            LoadPerminut();
+        }
+
+        private void LoadCurrent()
+        {
+            if (WebConfig.ConnectMode)
+            {
+                DataAPIFactory.GetDataAPI(APIConfig.ApiType).GetStockRealTime(current, stockId);
+                GlobalData.LastTradeTime = TimeSpan.Parse(current["time"].ToString());
+                GlobalData.LastTradeDate = DateTime.Parse(current["date"].ToString());
+            }
+            else
+            {
+                current = DBHelper.GetStockRealTime(stockId);
+            }
         }
 
         private void LoadHistory()
         {
-            DataTable stockHistories = DataDefine.GetNewStocksHistoryTable();
-           
-            ProgramConfig.APIConfig.GetHistoriesTable(stockHistories, stockId);
-
-            DBHelper.InsertIntoHistory(stockHistories);
-
+            histories =  DBHelper.GetHistories(stockId);
         }
 
         private void LoadPerbid()
         {
-            DataTable stockPerbid = DataDefine.GetNewStocksPerbidTable();
-
-            string newestPeriBidsInDB = DBHelper.GetNewestPerbidTime(stockId);
-
-            ProgramConfig.APIConfig.GetPerbidTable(stockPerbid, stockId, newestPeriBidsInDB);
-
-            DBHelper.InsertIntoPerbid(stockPerbid);
+            perbid = DBHelper.GetPerbid(stockId);
         }
-    }
 
-    public class MultipleLoader
-    {
+        private void LoadPerminut()
+        {
+            String lastPrice = "0";
+            int vol = 0;
 
+            TimeSpan startTime = TimeSpan.Parse("09:25:00");
+            TimeSpan minut = TimeSpan.Parse("00:01:00");
+            TimeSpan morningStart = TimeSpan.Parse("09:30:00");
+            TimeSpan morningEnd = TimeSpan.Parse("11:30:00");
+            TimeSpan noonStart = TimeSpan.Parse("13:00:00");
+            TimeSpan noonEnd = TimeSpan.Parse("15:00:00");
+
+            bool hasCaculate = false;
+
+            foreach (DataRow row in perbid.Rows)
+            {
+                hasCaculate = false;
+                TimeSpan rowTime = TimeSpan.Parse(row["time"].ToString().Substring(0, 5) + ":00");
+                if (rowTime <= morningStart || rowTime == morningEnd || rowTime == noonEnd)
+                {
+                    lastPrice = row["price"].ToString();
+                    vol += Int32.Parse(row["vol"].ToString());
+                    hasCaculate = true;
+                }
+                
+                if (!rowTime.ToString().Substring(0, 5).Equals(startTime.ToString().Substring(0, 5)) && rowTime > morningStart)
+                {
+                    DataRow minutRow = null;
+
+                    if (startTime < morningStart)
+                    {
+                        startTime = morningStart;
+
+                        minutRow = perminut.NewRow();
+
+                        minutRow["stockId"] = stockId;
+                        minutRow["date"] = row["date"];
+                        minutRow["time"] = startTime.ToString();
+                        minutRow["price"] = row["price"];
+                        minutRow["vol"] = 0;
+
+                        perminut.Rows.Add(minutRow);
+                    }
+
+                    for (; startTime < rowTime - minut; startTime += minut)
+                    {
+                        minutRow = perminut.NewRow();
+
+                        minutRow["stockId"] = stockId;
+                        minutRow["date"] = row["date"];
+                        minutRow["time"] = startTime.ToString();
+                        minutRow["price"] = lastPrice;
+                        minutRow["vol"] = 0;
+
+                        perminut.Rows.Add(minutRow);
+                    }
+
+                    minutRow = perminut.NewRow();
+
+                    minutRow["stockId"] = stockId;
+                    minutRow["date"] = row["date"];
+                    minutRow["time"] = startTime.ToString();
+                    minutRow["price"] = lastPrice;
+                    minutRow["vol"] = vol;
+
+                    perminut.Rows.Add(minutRow);
+                    vol = 0;
+                    startTime += minut;
+
+                    if (rowTime == morningEnd)
+                    {
+                        startTime = TimeSpan.Parse("13:00:00");
+                        continue;
+                    }
+                }
+                if (!hasCaculate)
+                {
+                    lastPrice = row["price"].ToString();
+                    vol += Int32.Parse(row["vol"].ToString());
+                }
+            }
+        }
     }
 }

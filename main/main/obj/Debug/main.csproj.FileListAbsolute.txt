@@ -54,6 +54,6 @@ E:\Code\C#\韩波炒股\main\main\obj\Debug\main.exe.manifest
 E:\Code\C#\韩波炒股\main\main\obj\Debug\main.application
 E:\Code\C#\韩波炒股\main\main\obj\Debug\main.DoubleBufferListView.resources
 E:\Code\C#\韩波炒股\main\main\obj\Debug\main.MainWindow.resources
-E:\Code\C#\韩波炒股\main\main\bin\Debug\DBConnector.dll
-E:\Code\C#\韩波炒股\main\main\bin\Debug\DBConnector.pdb
 E:\Code\C#\韩波炒股\main\main\obj\Debug\main.Form2.resources
+E:\Code\C#\韩波炒股\main\main\bin\Debug\Data.dll
+E:\Code\C#\韩波炒股\main\main\bin\Debug\Data.pdb

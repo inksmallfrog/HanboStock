@@ -42,38 +42,38 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DBConnector.dll" size="34816">
-      <assemblyIdentity name="DBConnector" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Data.dll" size="37888">
+      <assemblyIdentity name="Data" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>FPdFClNn/yBdFN8htGcux7C5IgckKcLwoa1Bb/oaKgM=</dsig:DigestValue>
+        <dsig:DigestValue>bezx6Cz/A/YjLN3EccbE8KPf+pbNJvNdVdUMi3vapRw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ImageOfStock.dll" size="95744">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ImageOfStock.dll" size="112640">
       <assemblyIdentity name="ImageOfStock" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>dqEUiwKHvLeiB2CZJGvC7N3C1HrcLXc9cObUYSrADUY=</dsig:DigestValue>
+        <dsig:DigestValue>s/exQWrj04jQYbN93YhT17ElbhDslUhz91DLJvTlolo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="main.exe" size="60928">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="main.exe" size="61952">
       <assemblyIdentity name="main" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Qh1G5KRYVGTxGodXQOgE4WwSi+3V85IIzIuuRUH4cnM=</dsig:DigestValue>
+        <dsig:DigestValue>lXs6CNDKPOC1RzQ8Fg9o5aEo154Qlia+96tVGOQbm5o=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
