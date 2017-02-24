@@ -34,6 +34,7 @@ namespace ImageOfStock
         public KLineGraph()
         {
             InitializeComponent();
+            grammaParser.Graph = this;  
             //加载事件
             this.HandleCreated += new EventHandler(ChartGraph_HandleCreated);
             this.SizeChanged += new EventHandler(ChartGraph_SizeChanged);
@@ -79,6 +80,15 @@ namespace ImageOfStock
         /// 鼠标点击时的y坐标
         /// </summary>
         private int mouse_y = -1;
+
+        private GrammaParser grammaParser = new GrammaParser();
+        public GrammaParser Gramma
+        {
+            get
+            {
+                return grammaParser;
+            }
+        }
 
         /// <summary>
         /// 保存接收到的所有数据的DataTable.
@@ -389,6 +399,8 @@ namespace ImageOfStock
         /// 正在改变大小的图层
         /// </summary>
         private ChartPanel userResizePanel = null;
+
+        private List<IndicatorMovingAverage> indMovingAverageList = new List<IndicatorMovingAverage>();
 
         /// <summary>
         /// 简单移动平均线的集合
@@ -1526,6 +1538,23 @@ namespace ImageOfStock
             }
         }
 
+        public void GetMaxAndMin(ChartPanel panel)
+            {
+                foreach(TrendLineSeries series in panel.TrendLineSeriesList){
+                    for (int i = 0; i < dtAllMsg.Rows.Count; ++i)
+                    {
+                        if (Double.Parse(dtAllMsg.Rows[i][series.Field].ToString()) > panel.MaxValue)
+                        {
+                            panel.MaxValue = Double.Parse(dtAllMsg.Rows[i][series.Field].ToString());
+                        }
+                        if (Double.Parse(dtAllMsg.Rows[i][series.Field].ToString()) < panel.MinValue)
+                        {
+                            panel.MinValue = Double.Parse(dtAllMsg.Rows[i][series.Field].ToString());
+                        }
+                    }
+                }
+            }
+
         /// <summary>
         /// 设置买卖文字的样式
         /// </summary>
@@ -2124,6 +2153,11 @@ namespace ImageOfStock
             return lineSeries;
         }
 
+        public void Generate()
+        {
+            grammaParser.Generate();
+        }
+
         public void SetTrendLineToPanel(string field, TrendLineSeries lineSeries, int panelID)
         {
             if (this.dicChartPanel.ContainsKey(panelID))
@@ -2132,6 +2166,27 @@ namespace ImageOfStock
                 chartPanel.YScaleField.Add(field);
                 chartPanel.TrendLineSeriesList.Add(lineSeries);
             }
+        }
+
+        public IndicatorMovingAverage AddMovingAverage(string field, string displayName, string target, int cycle, int panelID)
+        {
+            if (field == null || this.dtAllMsg.Columns.Contains(field))
+            {
+                return null;
+            }
+            if (this.dicChartPanel.ContainsKey(panelID))
+            {
+                ChartPanel chartPanel = this.dicChartPanel[panelID];
+                IndicatorMovingAverage indMA = new IndicatorMovingAverage();
+                indMA.Target = target;
+                indMA.Cycle = cycle;
+                indMA.DataSource = this.dtAllMsg;
+                indMA.TrendLineSeries = AddTrendLine(field, displayName);
+                SetTrendLineToPanel(field, indMA.TrendLineSeries, panelID);
+                this.indMovingAverageList.Add(indMA);
+                return indMA;
+            }
+            return null;
         }
 
         /// <summary>
@@ -2681,8 +2736,18 @@ namespace ImageOfStock
             for (int i = startIndex; i <= endIndex; i++)
             {
                 DataRow dr = table.Rows[i];
+                //简单移动平均线
+                if (indicator is IndicatorMovingAverage)
+                {
+                    IndicatorMovingAverage indMA = indicator as IndicatorMovingAverage;
+                    double maValue = indMA.Calculate(i);
+                    if (maValue != NULL)
+                    {
+                        SetValue(dr, indMA.TrendLineSeries.Field, maValue);
+                    }
+                }
                 //平滑移动平均线
-                if (indicator is IndicatorSimpleMovingAverage)
+                else if (indicator is IndicatorSimpleMovingAverage)
                 {
                     IndicatorSimpleMovingAverage indSMA = indicator as IndicatorSimpleMovingAverage;
                     double smaValue = indSMA.Calculate(i); 
@@ -4337,6 +4402,27 @@ namespace ImageOfStock
                 return System.Guid.NewGuid().ToString();
             }
 
+            public static double CalculateMovingAvg(int r, int cycle, String field, DataTable dataSource)
+            {
+                double sumValue = 0.0;
+                if (r < cycle)
+                {
+                    for (int i = 0; i < r + 1; ++i)
+                    {
+                        sumValue += Convert.ToDouble(dataSource.Rows[i][field]);
+                    }
+                    return sumValue / ((r == 0) ? 1 : r);
+                }
+                else
+                {
+                    for (int i = r - cycle; i < r + 1; ++i)
+                    {
+                        sumValue += Convert.ToDouble(dataSource.Rows[i][field]);
+                    }
+                    return sumValue / cycle;
+                }
+            }
+
             /// <summary>
             /// 获取指定索引的移动平均值
             /// </summary>
@@ -5023,6 +5109,8 @@ namespace ImageOfStock
             {
                 yScaleTick = 0.01;
                 yScaleField.Clear();
+                maxValue = 0.0;
+                minValue = 0.0;
                 candleSeriesList.Clear();
                 historamSeriesList.Clear();
                 trendLineSeriesList.Clear();
@@ -6237,9 +6325,78 @@ namespace ImageOfStock
             }
         }
 
+        public class IndicatorMovingAverage
+        {
+             public IndicatorMovingAverage()
+            {
+
+            }
+
+            /// <summary>
+            /// 目标字段
+            /// </summary>
+            private string target = string.Empty;
+
+            public string Target
+            {
+                get { return target; }
+                set { target = value; }
+            }
+
+            /// <summary>
+            /// 周期
+            /// </summary>
+            private int cycle = 5;
+
+            public int Cycle
+            {
+                get { return cycle; }
+                set { cycle = value; }
+            }
+
+            /// <summary>
+            /// 趋势线对象
+            /// </summary>
+            private TrendLineSeries trendLineSeries = null;
+
+            public TrendLineSeries TrendLineSeries
+            {
+                get { return trendLineSeries; }
+                set { trendLineSeries = value; }
+            }
+
+            /// <summary>
+            /// 数据源
+            /// </summary>
+            private DataTable dataSource;
+
+            public DataTable DataSource
+            {
+                get { return dataSource; }
+                set { dataSource = value; }
+            }
+
+            /// <summary>
+            /// 计算简单移动平均线的值
+            /// </summary>
+            /// <param name="field"></param>
+            /// <param name="n"></param>
+            /// <param name="dt"></param>
+            /// <returns></returns>
+            public double Calculate(int r)
+            {
+                if (dataSource.Columns.Contains(trendLineSeries.Field) && dataSource.Columns.Contains(target))
+                {
+                    return CommonClass.CalculateMovingAvg(r, cycle, trendLineSeries.Field, dataSource);
+                }
+                return NULL;
+            }
+        }
+
         /// <summary>
         /// 平滑移动平均线(SMA)
         /// </summary>
+        /// 
         public class IndicatorSimpleMovingAverage
         {
             public IndicatorSimpleMovingAverage()
@@ -6988,6 +7145,641 @@ namespace ImageOfStock
             }
         }
         #endregion
+
+        public class GrammaParser
+        {
+            LatexParser latex = LatexParser.Instance;
+            KLineGraph graph;
+            string lastId;
+            string lastFunc;
+            string lastTerm;
+
+            Stack<double> parameter = new Stack<double>();
+            Stack<string> operators = new Stack<string>();
+            int operatorPri = -1;
+
+            int brakes = 0;
+                
+            List<String> parameters = new List<string>();
+            List<String> dataId = new List<String>(new String[] {"close", "open", "high", "low", "volume"});
+            List<String> funcId = new List<String>(new String[] { "MA", "SMA", "EMA" });
+            Color[] lineColors = new Color[4] {Color.White, Color.Yellow, Color.Purple, Color.Blue};
+            int lineNumber = 0;
+
+            List<LatexParser.LatexUnit> units = new List<LatexParser.LatexUnit>();
+            int currentUnit = 0;
+
+            public LatexParser Latex { get { return latex; } }
+
+            public KLineGraph Graph { set { graph = value; } }
+
+            public void Generate()
+            {
+                latex.Reset();
+                latex.ReadNext();
+                lineNumber = 0;
+                graph.bottomPanel.ClearPanel();
+                IsGramma();
+                graph.RefreshGraph();
+            }
+
+            public bool IsGramma()
+            {
+                if (!IsStatement()) { return false; }
+                if (latex.Unit.type != LatexParser.LatexType.Semicolon) { return false; }
+                else { latex.ReadNext(); }
+                if (!latex.End) { return IsGramma(); }
+                
+                return true;
+            }
+
+            public bool IsStatement()
+            {
+                if (latex.Unit.type != LatexParser.LatexType.Id) { return false; }
+                else { lastId = latex.Unit.id; latex.ReadNext(); }
+                return IsAfterStatement();
+            }
+
+            public bool IsAfterStatement()
+            {
+                if (latex.Unit.type == LatexParser.LatexType.Assign)
+                {
+                    latex.ReadNext();
+                    if (!IsOutput()) { return false; }
+                    return IsOptionalState();
+                }
+                else if (latex.Unit.type == LatexParser.LatexType.Output)
+                {
+                    latex.ReadNext();
+                    return IsOutput();
+                }
+                else return false;
+            }
+
+            public bool IsOptionalState()
+            {
+                if (latex.Unit.type == LatexParser.LatexType.Comma)
+                {
+                    latex.ReadNext();
+                    return latex.Unit.type == LatexParser.LatexType.Id;
+                }
+                return true;
+            }
+
+            public bool IsOutput()
+            {
+                if (!dataId.Contains(latex.Unit.id.ToLower()) && 
+                    !funcId.Contains(latex.Unit.id.ToUpper()) && 
+                    latex.Unit.type != LatexParser.LatexType.Number &&
+                    latex.Unit.type != LatexParser.LatexType.LeftBrake) 
+                    return false;
+                TrendLineSeries tls = graph.AddTrendLine(lastId, lastId);
+                parameters.Clear();
+                parameter.Clear();
+                operators.Clear();
+                operatorPri = -1;
+                units.Clear();
+                GetFormula();
+                LatexParser.LatexUnit lunit = new LatexParser.LatexUnit();
+                lunit.id = ";";
+                lunit.type = LatexParser.LatexType.Semicolon;
+                units.Add(lunit);
+                for (int i = 0; i < graph.DtAllMsg.Rows.Count; ++i)
+                {
+                    currentUnit = 0;
+                    graph.SetValue(graph.dtAllMsg.Rows[i], lastId, CalculateValue(i));
+                }
+                graph.SetTrendLineToPanel(lastId, tls, graph.bottomPanelID);
+                graph.SetTrendLineStyle(lastId, lineColors[lineNumber], lineColors[lineNumber], 1, DashStyle.Solid);
+                ++lineNumber;
+                return true;
+            }
+
+            public void GetFormula()
+            {
+                if (latex.Unit.type == LatexParser.LatexType.LeftBrake)
+                {
+                    ++brakes;
+                    units.Add(latex.Unit);
+                    latex.ReadNext();
+                    GetFormula();
+                    return;
+                }
+                if (latex.Unit.type == LatexParser.LatexType.Number)
+                {
+                    units.Add(latex.Unit);
+                    latex.ReadNext();
+                    GetTerm();
+                    return;
+                }
+                if (latex.Unit.type != LatexParser.LatexType.Id) { return; }
+                if (dataId.Contains(latex.Unit.id.ToLower()))
+                {
+                    units.Add(latex.Unit);
+                    latex.ReadNext();
+                    GetTerm();
+                    return;
+                }
+                else if (funcId.Contains(latex.Unit.id.ToUpper()))
+                {
+                    units.Add(latex.Unit);
+                    latex.ReadNext();
+                    GetFunc();
+                    return;
+                }
+            }
+
+            void GetTerm()
+            {
+                if (latex.Unit.type == LatexParser.LatexType.Operator)
+                {
+                    units.Add(latex.Unit);
+                    latex.ReadNext();
+                    GetFormula();
+                    return;
+                }
+                if (latex.Unit.type == LatexParser.LatexType.RightBrake && brakes > 0)
+                {
+                    units.Add(latex.Unit);
+                    --brakes;
+                    latex.ReadNext();
+                    GetTerm();
+                    return;
+                }
+            }
+
+            void GetFunc()
+            {
+                if (latex.Unit.type != LatexParser.LatexType.LeftBrake) { units.Clear(); return; }
+                else { units.Add(latex.Unit); latex.ReadNext(); }
+                if (!GetParameters()) { units.Clear();  return; }
+                if (latex.Unit.type != LatexParser.LatexType.RightBrake) { units.Clear(); return; }
+                else { units.Add(latex.Unit); latex.ReadNext(); }
+            }
+
+            bool GetParameters()
+            {
+                GetFormula();
+                if (!GetAfterParameters()) { units.Clear(); return false; }
+                return true;
+            }
+
+            bool GetAfterParameters()
+            {
+                if (latex.Unit.type != LatexParser.LatexType.Comma) return true;
+                else
+                {
+                    units.Add(latex.Unit);
+                    latex.ReadNext();
+                    GetParameters();
+                }
+                return true;
+            }
+
+
+            public double CalculateValue(int i)
+            {
+                if (units[currentUnit].type == LatexParser.LatexType.LeftBrake)
+                {
+                    lastTerm += units[currentUnit].id;
+                    operators.Push("(");
+                    operatorPri = -1;
+                    ++currentUnit;
+
+                    return CalculateValue(i);
+                }
+                if (units[currentUnit].type == LatexParser.LatexType.Number)
+                {
+                    lastTerm += units[currentUnit].id;
+                    parameter.Push(Double.Parse(units[currentUnit].id));
+                    ++currentUnit;
+                    
+                    return CalculateTerm(i);
+                }
+                if (units[currentUnit].type != LatexParser.LatexType.Id)
+                {
+                    while (operators.Count != 0)
+                    {
+                        parameter.Push(Cal(parameter.Pop(), parameter.Pop(), operators.Pop()));
+                    }
+                    return parameter.Pop();
+                }
+                if (dataId.Contains(units[currentUnit].id.ToLower()))
+                {
+                    string id = units[currentUnit].id.ToLower();
+                    id = id.Replace("close", "closeP");
+                    id = id.Replace("open", "openP");
+                    lastTerm += id;
+                    parameter.Push(Double.Parse(graph.DtAllMsg.Rows[i][id].ToString()));
+                    ++currentUnit;
+                    return CalculateTerm(i);
+                }
+                else if (funcId.Contains(units[currentUnit].id.ToUpper()))
+                {
+                    string funcName = units[currentUnit].id.ToUpper();
+                    ++currentUnit;
+                    parameter.Push(CalculateFunc(funcName, i));
+                }
+
+                while (operators.Count != 0)
+                {
+                    parameter.Push(Cal(parameter.Pop(), parameter.Pop(), operators.Pop()));
+                }
+                return parameter.Pop();
+            }
+
+            public double CalculateTerm(int i)
+            {
+                if (units[currentUnit].type == LatexParser.LatexType.Operator || 
+                    (units[currentUnit].type == LatexParser.LatexType.RightBrake && operators.Contains("(")))
+                {
+                    lastTerm += units[currentUnit].id;
+                    switch (units[currentUnit].id)
+                    {
+                        case "+":
+                        case "-":
+                            if (operatorPri > 0)
+                            {
+                                parameter.Push(Cal(parameter.Pop(), parameter.Pop(), operators.Pop()));
+                            }
+                            operators.Push(units[currentUnit].id);
+                            operatorPri = 0;
+                            break;
+                        case "*":
+                        case "/":
+                            operators.Push(units[currentUnit].id);
+                            operatorPri = 1;
+                            break;
+                        case ")":
+                            string nextop = operators.Peek();
+                            while (nextop != "(")
+                            {
+                                parameter.Push(Cal(parameter.Pop(), parameter.Pop(), operators.Pop()));
+                                nextop = operators.Peek();
+                            }
+                            operators.Pop();
+                            if (operators.Count > 0)
+                            {
+                                operatorPri = (operators.Peek() == "+" || operators.Peek() == "-") ? 0 : 1;
+                            }
+                            ++currentUnit;
+                            return CalculateTerm(i);
+                            
+                    }
+                    ++currentUnit;
+                    return CalculateValue(i);
+                }
+                else
+                {
+                    while (operators.Count != 0)
+                    {
+                        parameter.Push(Cal(parameter.Pop(), parameter.Pop(), operators.Pop()));
+                    }
+                    return parameter.Pop();
+                }
+            }
+
+            public double CalculateFunc(string funcName, int i)
+            {
+                if (units[currentUnit].type != LatexParser.LatexType.LeftBrake) return 0.0;
+                else { ++currentUnit; }
+                if (!IsParameters(i)) return 0.0;
+                if (units[currentUnit].type != LatexParser.LatexType.RightBrake) return 0.0;
+                else { ++currentUnit; }
+          
+                switch (funcName)
+                {
+                    case "MA":
+                            return CommonClass.CalculateMovingAvg(i, Int32.Parse(parameters[1]), parameters[0], graph.DtAllMsg);
+                    case "EMA":
+                            return CommonClass.CalculateExponentialMovingAvg(lastId, parameters[0], Int32.Parse(parameters[1]), graph.DtAllMsg, i);
+                    case "SMA":
+                            return CommonClass.CalcuteSimpleMovingAvg(i, Int32.Parse(parameters[1]), lastId, parameters[0], Double.Parse(graph.DtAllMsg.Rows[i][parameters[0]].ToString()), graph.DtAllMsg);
+                    default:
+                        break;
+                }
+                return 0.0;
+            }
+
+            private double Cal(double n1, double n2, string op)
+            {
+                switch (op)
+                {
+                    case "+":
+                        return n2 + n1;
+                    case "-":
+                        return n2 - n1;
+                    case "*":
+                        return n2 * n1;
+                    case "/":
+                        return n2 / n1;
+                    default:
+                        break;
+                }
+                return 0.0;
+            }
+
+            public bool IsParameters(int i)
+            {
+                lastTerm = "";
+                double value = CalculateValue(i);
+                parameters.Add(lastTerm);
+                if (!dataId.Contains(lastTerm))
+                    graph.SetValue(graph.dtAllMsg.Rows[i], lastTerm, value);
+
+                if (!IsAfterParameters(i)) return false;
+                return true;
+            }
+
+            public bool IsAfterParameters(int i)
+            {
+                if (units[currentUnit].type != LatexParser.LatexType.Comma) return true;
+                else
+                {
+                    ++currentUnit;
+                    return IsParameters(i);
+                }
+            }
+
+            public bool IsBoolParameter()
+            {
+                if (latex.Unit.type != LatexParser.LatexType.Id) return false;
+                else { latex.ReadNext(); }
+                if (latex.Unit.type != LatexParser.LatexType.BoolOperator) return false;
+                else { latex.ReadNext(); }
+                if (latex.Unit.type != LatexParser.LatexType.Id) return false;
+                else { latex.ReadNext(); }
+                return IsAfterBoolParameter();
+            }
+
+            public bool IsAfterBoolParameter()
+            {
+                if (latex.Unit.type != LatexParser.LatexType.BoolOperator) return true;
+                else { latex.ReadNext(); }
+                if (latex.Unit.type != LatexParser.LatexType.Id) return false;
+                else { latex.ReadNext(); }
+                return IsAfterBoolParameter();
+            }
+        }
+    }
+
+    public class LatexParser
+    {
+        public enum LatexType
+        {
+            Id,
+            Number,
+            Comma,
+            Semicolon,
+            Assign,
+            Output,
+            LeftBrake,
+            RightBrake,
+            Operator,
+            BoolOperator,
+        }
+
+        public struct LatexUnit
+        {
+            public string id;
+            public LatexType type;
+            public bool isHandled;
+        }
+
+        //单例
+        private static LatexParser instance = new LatexParser();
+        public static LatexParser Instance { get { return instance; } }
+
+        //词法分析作用的文本框
+        private TextBox textBox;
+        public TextBox TextBox { set { textBox = value; } }
+
+        //文本框内容转换为流
+        private MemoryStream memoryStream;
+
+        //词法单元
+        private LatexUnit unit;
+        public LatexUnit Unit { get { return unit; } }
+
+        //下一个处理的字符
+        private char next;
+
+        //行号
+        private int lineNum;
+        public int LineNum { get { return lineNum; } }
+
+        //列号
+        private int columnNum;
+        public int ColumnNum { get { return columnNum; } }
+
+        //是否处理完成
+        private bool end;
+        public bool End { get { return end; } }
+
+        //读入下一个词法单元
+        public void ReadNext()
+        {
+            //判断是否读完
+            if (next == 65535) { end = true; return; }
+
+            //重置词法单元处理状态
+            unit.isHandled = false;
+
+            ReadBlack();        //读取空字符
+            ReadSymbol();       //读取符号
+            ReadOperator();     //读取运算符
+            ReadNumber();       //读取数字
+            ReadId();           //读取id
+        }
+
+        private void ReadBlack()
+        {
+            bool quit = false;
+            while (!quit)
+            {
+                switch (next)
+                {
+                    case ' ':
+                    case '\t':
+                        next = (char)memoryStream.ReadByte();
+                        break;
+                    case '\r':
+                        next = (char)memoryStream.ReadByte();
+                        break;
+                    case '\n':
+                        ++lineNum;
+                        columnNum = 0;
+                        next = (char)memoryStream.ReadByte();
+
+                        break;
+                    default:
+                        quit = true;
+                        break;
+                }
+            }
+        }
+
+        private void ReadSymbol()
+        {
+            switch (next)
+            {
+                case ';':
+                    unit.id = ";";
+                    unit.type = LatexType.Semicolon;
+                    unit.isHandled = true;
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    break;
+                case ',':
+                    unit.id = ",";
+                    unit.type = LatexType.Comma;
+                    unit.isHandled = true;
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void ReadOperator()
+        {
+            if (unit.isHandled) return;
+            switch (next)
+            {
+                case ':':
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    if (next == '=')
+                    {
+                        unit.id = ":=";
+                        unit.type = LatexType.Assign;
+                        next = (char)memoryStream.ReadByte();
+                        ++columnNum;
+                    }
+                    else
+                    {
+                        unit.id = ":";
+                        unit.type = LatexType.Output;
+                    }
+                    unit.isHandled = true;
+                    break;
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    unit.id = "" + next;
+                    unit.type = LatexType.Operator;
+                    unit.isHandled = true;
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    break;
+                case '<':
+                case '>':
+                case '=':
+                    unit.id = "" + next;
+                    unit.type = LatexType.BoolOperator;
+                    unit.isHandled = true;
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    break;
+                case '(':
+                    unit.id = "(";
+                    unit.type = LatexType.LeftBrake;
+                    unit.isHandled = true;
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    break;
+                case ')':
+                    unit.id = ")";
+                    unit.type = LatexType.RightBrake;
+                    unit.isHandled = true;
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void ReadNumber()
+        {
+            if (unit.isHandled) return;
+
+            bool isDouble = false;
+            int num = 0;
+            int point = 1;
+
+            try
+            {
+                num = num * 10 + Int16.Parse(next.ToString());
+                if (isDouble) point *= 10;
+            }
+            catch (FormatException e)
+            {
+                if (next == '.') isDouble = true;
+                else return;
+            }
+
+            unit.isHandled = true;
+            unit.type = LatexType.Number;
+
+            while (true)
+            {
+                next = (char)memoryStream.ReadByte();
+                ++columnNum;
+                try
+                {
+                    num = num * 10 + Int16.Parse(next.ToString());
+                    if (isDouble) point *= 10;
+                }
+                catch (FormatException e)
+                {
+                    if (next == '.')
+                    {
+                        if (!isDouble) { isDouble = true; }
+                        else { }//出错
+                    }
+                    else break;
+                }
+            }
+
+            if (point > 0) unit.id = (num * 1.0 / point).ToString();
+            else unit.id = num.ToString();
+        }
+        private void ReadId()
+        {
+            if (unit.isHandled) return;
+
+            if (Char.IsLetter(next))
+            {
+                unit.isHandled = true;
+                unit.id = "" + next;
+                unit.type = LatexType.Id;
+                while (true)
+                {
+                    next = (char)memoryStream.ReadByte();
+                    ++columnNum;
+                    if (Char.IsDigit(next) || Char.IsLetter(next))
+                    {
+                        unit.id += next;
+                    }
+                    else return;
+                }
+            }
+
+            else { } //出错
+        }
+
+        //重置词法处理对象
+        public void Reset()
+        {
+            lineNum = 0;
+            columnNum = 0;
+            end = false;
+            memoryStream = new MemoryStream(Encoding.ASCII.GetBytes(textBox.Text), false);
+            next = (char)memoryStream.ReadByte();
+        }
     }
 }
 

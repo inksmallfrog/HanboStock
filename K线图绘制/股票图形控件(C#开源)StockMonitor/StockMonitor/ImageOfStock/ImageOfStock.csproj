@@ -41,6 +41,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -95,6 +96,12 @@
     <Compile Include="SingleGraph.Designer.cs">
       <DependentUpon>SingleGraph.cs</DependentUpon>
     </Compile>
+    <Compile Include="StockSearch.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StockSearch.Designer.cs">
+      <DependentUpon>StockSearch.cs</DependentUpon>
+    </Compile>
     <Compile Include="StocksList.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -107,8 +114,17 @@
     <Compile Include="TimeLineGraph.Designer.cs">
       <DependentUpon>TimeLineGraph.cs</DependentUpon>
     </Compile>
+    <Compile Include="AllDetailPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AllDetailPanel.Designer.cs">
+      <DependentUpon>AllDetailPanel.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AllDetailPanel.resx">
+      <DependentUpon>AllDetailPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DetailPanel.resx">
       <DependentUpon>DetailPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -123,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SingleGraph.resx">
       <DependentUpon>SingleGraph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StockSearch.resx">
+      <DependentUpon>StockSearch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TimeLineGraph.resx">
       <DependentUpon>TimeLineGraph.cs</DependentUpon>

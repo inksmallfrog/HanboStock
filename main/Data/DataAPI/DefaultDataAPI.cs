@@ -263,8 +263,6 @@ namespace Dao.DataAPI
             System.IO.Stream s = response.GetResponseStream();
             StreamReader Reader = new StreamReader(s, Encoding.UTF8);
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             string[] jsCodes = Reader.ReadToEnd().Split(';');
             string date = DateTime.Now.ToShortDateString();
             foreach (string jsCode in jsCodes)
@@ -272,6 +270,8 @@ namespace Dao.DataAPI
                 if (jsCode.Contains("var") || jsCode == "\n") continue;
 
                 string[] contents = ParseEachPerBid(jsCode);
+
+                if (int.Parse(contents[1]) == 0) continue;
 
                 DataRow stockPerbid = table.NewRow();
                 stockPerbid["stockId"] = stockId;
@@ -282,8 +282,259 @@ namespace Dao.DataAPI
                 stockPerbid["type"] = int.Parse(contents[3]);
                 table.Rows.Add(stockPerbid);
             }
-            sw.Stop();
-            long a = sw.ElapsedMilliseconds;
+        }
+        private static string[] ParseEachPerBid(string jsCode)
+        {
+            string[] contents = new string[4];
+            //" trade_item_list[0] = new Array('11:30:00', '200', '10.340', 'UP')";
+            string data = jsCode.Substring(jsCode.IndexOf('\''));
+            data = data.Substring(0, data.Length - 1);
+            contents = data.Replace("'", "").Replace(" ", "").Split(',');
+            if (contents[3].Equals("UP"))
+            {
+                contents[3] = "1";
+            }
+            else if (contents[3].Equals("DOWN"))
+            {
+                contents[3] = "-1";
+            }
+            else
+            {
+                contents[3] = "0";
+            }
+            return contents;
+        }
+    }
+
+    public class SinaDataAPI : IDataAPI
+    {
+        //网易接口
+        private String realtimeUrl = "http://hq.sinajs.cn/rn=spgy2&list=";
+
+        //腾讯
+        private String historyUrl = "http://web.ifzq.gtimg.cn/appstock/app/kline/kline?_var=kline_day&param=";
+
+        //新浪接口
+        private String perBidsUrl = "http://vip.stock.finance.sina.com.cn/quotes_service/view/CN_TransListV2.php?symbol=";
+
+        void IDataAPI.GetRealTimeTable(DataTable resultTable, List<String> needList)
+        {
+            string urlContent = "";
+            foreach (String stockId in needList)
+            {
+                urlContent += (stockId[0] == '1') ? "sz" + stockId.Substring(1) : "sh" + stockId.Substring(1);
+                urlContent += ",";
+            }
+            string url = realtimeUrl + urlContent;
+
+            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)WebRequest.Create(url); ;
+            System.Net.HttpWebResponse response = null;
+            try
+            {
+                response = (System.Net.HttpWebResponse)request.GetResponse();
+            }
+            catch (Exception ex)
+            {
+                //网络连接失败
+            }
+            if (response == null)
+            {
+                if (WebConfig.ConnectMode)
+                {
+                    WebConfig.ConnectMode = false;
+                    MessageBox.Show("无法连接网络，进入脱机运行模式");
+                }
+
+                return;
+            }
+
+            System.IO.Stream s = response.GetResponseStream();
+            StreamReader Reader = new StreamReader(s, Encoding.GetEncoding("GB2312"));
+
+            string[] stocks = Reader.ReadToEnd().Replace("\n", "").Split(';');
+            foreach (string stock in stocks)
+            {
+                if (stock == "") continue;
+                DataRow current = resultTable.NewRow();
+                ParseRealtime(stock, current);
+                resultTable.Rows.Add(current);
+            }
+        }
+
+        void IDataAPI.GetStockRealTime(DataRow current, String stockId)
+        {
+            string url = realtimeUrl + ((stockId[0] == '1') ? ("sz" + stockId.Substring(1)) : ("sh" + stockId));
+
+            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)WebRequest.Create(url); ;
+            System.Net.HttpWebResponse response = null;
+            try
+            {
+                response = (System.Net.HttpWebResponse)request.GetResponse();
+            }
+            catch (Exception ex)
+            {
+                //网络连接失败
+            }
+            if (response == null)
+            {
+                if (WebConfig.ConnectMode)
+                {
+                    WebConfig.ConnectMode = false;
+                    MessageBox.Show("无法连接网络，进入脱机运行模式");
+                }
+
+                return;
+            }
+
+            System.IO.Stream s = response.GetResponseStream();
+            StreamReader Reader = new StreamReader(s, Encoding.GetEncoding("GB2312"));
+
+            string[] stocks = Reader.ReadToEnd().Replace("\n", "").Split(';');
+            foreach (string stock in stocks)
+            {
+                if (stock == "") continue;
+                ParseRealtime(stock, current);
+            }
+
+        }
+        void ParseRealtime(string stock, DataRow current)
+        {
+            string stockId = stock.Split('=')[0];
+            stockId = stockId.Replace("var hq_str_sz", "1");
+            stockId = stockId.Replace("var hq_str_sh", "0");
+
+            current["stockId"] = stockId;
+
+            string data = stock.Split('=')[1];
+            data = data.Replace("\"", "");
+            string[] result = data.Split(',');
+
+            if(result.Length < 2)
+            {
+                DBHelper.RemoveStockCode(stockId);
+                return;
+            }
+
+            current["name"] = result[0];
+            current["date"] = result[30];
+            current["time"] = result[31];
+            current["openP"] = result[1];
+            current["closeP"] = result[2];
+            current["price"] = result[3];
+            current["high"] = result[4];
+            current["low"] = result[5];
+            current["volume"] = result[8];
+            current["turnover"] = result[9];
+            if(result[32] == "03")
+            {
+                current["status"] = 4;
+            }
+            else
+            {
+                current["status"] = 0;
+            }
+
+            for (int i = 1; i < 6; ++i)
+            {
+                current["bid" + i + "Price"] = result[11 + (i - 1) * 2];
+                current["bid" + i + "Vol"] = result[10 + (i - 1) * 2];
+
+                current["ask" + i + "Price"] = result[21 + (i - 1) * 2];
+                current["ask" + i + "Vol"] = result[20 + (i - 1) * 2];
+            }
+        }
+
+        void IDataAPI.GetHistoriesTable(System.Data.DataTable table, string stockId, int dirtaDay)
+        {
+            dirtaDay = (dirtaDay == -1) ? 10000 : dirtaDay;
+            string code = (stockId[0] == '1') ? "sz" + stockId.Substring(1) : "sh" + stockId;
+            string url = historyUrl + code + ",day,,," + dirtaDay + ",";
+
+            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)WebRequest.Create(url); ;
+            System.Net.HttpWebResponse response = null;
+            try
+            {
+                response = (System.Net.HttpWebResponse)request.GetResponse();
+            }
+            catch (Exception ex)
+            {
+                //访问的时间不存在
+                return;
+            }
+
+            System.IO.Stream s = response.GetResponseStream();
+            StreamReader Reader = new StreamReader(s, Encoding.UTF8);
+            String json = Reader.ReadToEnd();
+            json = json.Replace("kline_day=", "");
+            JObject obj = null;
+            try
+            {
+                obj = JObject.Parse(json);
+            }
+            catch (Exception ex)
+            {
+                //数据读取失败，可能是API繁忙
+                MessageBox.Show("网络繁忙，加载到无效的json历史数据！" + ex.Message);
+                return;
+            }
+
+            JToken histories = obj["data"][code]["day"];
+            foreach (JToken history in histories)
+            {
+                DataRow stockHistory = table.NewRow();
+                stockHistory["stockId"] = stockId;
+                stockHistory["date"] = history[0];
+                stockHistory["openP"] = double.Parse(history[1].ToString());
+                stockHistory["closeP"] = double.Parse(history[2].ToString());
+                stockHistory["high"] = double.Parse(history[3].ToString());
+                stockHistory["low"] = double.Parse(history[4].ToString());
+                stockHistory["volume"] = decimal.Parse(history[5].ToString());
+
+                table.Rows.Add(stockHistory);
+            }
+        }
+
+        void IDataAPI.GetPerbidTable(System.Data.DataTable table, string stockId, int count)
+        {
+            string url = perBidsUrl;
+            url += (stockId[0] == '1') ? "sz" + stockId.Substring(1) : "sh" + stockId;
+            if (count != -1)
+            {
+                url += "&num=" + count;
+            }
+            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)WebRequest.Create(url); ;
+            System.Net.HttpWebResponse response = null;
+
+            try
+            {
+                response = (System.Net.HttpWebResponse)request.GetResponse();
+            }
+            catch (Exception ex)
+            {
+                //访问的时间不存在
+                return;
+            }
+            System.IO.Stream s = response.GetResponseStream();
+            StreamReader Reader = new StreamReader(s, Encoding.UTF8);
+
+            string[] jsCodes = Reader.ReadToEnd().Split(';');
+            string date = DateTime.Now.ToShortDateString();
+            foreach (string jsCode in jsCodes)
+            {
+                if (jsCode.Contains("var") || jsCode == "\n") continue;
+
+                string[] contents = ParseEachPerBid(jsCode);
+
+
+                DataRow stockPerbid = table.NewRow();
+                stockPerbid["stockId"] = stockId;
+                stockPerbid["date"] = date;
+                stockPerbid["time"] = contents[0];
+                stockPerbid["price"] = double.Parse(contents[2]);
+                stockPerbid["vol"] = int.Parse(contents[1]);
+                stockPerbid["type"] = int.Parse(contents[3]);
+                table.Rows.Add(stockPerbid);
+            }
         }
         private static string[] ParseEachPerBid(string jsCode)
         {

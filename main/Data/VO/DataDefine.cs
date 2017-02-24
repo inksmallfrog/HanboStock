@@ -33,6 +33,7 @@ namespace Dao
         private static DataTable stocksPerbidSchema = new DataTable("stocksPerbidSchema");
         private static DataTable stocksPerminutSchema = new DataTable("stocksPerminutSchema");
         private static DataTable stocksRealtimeSchema = new DataTable("stocksRealtimeSchema");
+        private static DataTable formulaSchema = new DataTable("formulaSchema");
 
         public static void InitDataDefine(){
             stocksCodeSchema.Columns.Add("stockId");
@@ -83,6 +84,9 @@ namespace Dao
                 stocksRealtimeSchema.Columns.Add("bid" + i + "Price");
                 stocksRealtimeSchema.Columns.Add("bid" + i + "Vol");
             }
+
+            formulaSchema.Columns.Add("name");
+            formulaSchema.Columns.Add("formula");
         }
 
         public static DataTable GetNewStocksCodeTable(){ return stocksCodeSchema.Clone(); }
@@ -90,9 +94,15 @@ namespace Dao
         public static DataTable GetNewStocksPerbidTable() { return stocksPerbidSchema.Clone(); }
         public static DataTable GetNewStocksPerminutTable() { return stocksPerminutSchema.Clone(); }
         public static DataTable GetNewStocksRealtimeTable() { return stocksRealtimeSchema.Clone(); }
+        public static DataTable GetNewFormulaTable() { return formulaSchema.Clone(); }
 
 
-
+        public struct RealtimeRecord
+        {
+            public int vol;
+            public decimal bid;
+            public decimal ask;
+        }
         /*public struct StockCode
         {
             public string stockId;

@@ -16,7 +16,7 @@ namespace ImageOfStock
     public partial class StocksList : ListView
     {
         #region 变量
-        private int listMaxSize = 28;
+        private int listMaxSize = 27;
         private int[] headerWidth = null;
 
         private Color upBgColor = Color.Red;
@@ -239,6 +239,10 @@ namespace ImageOfStock
 
         public void BindAllData(DataTable data, object refresh)
         {
+            if (data == null)
+            {
+                return;
+            }
             if (InvokeRequired)
             {
                 Action<object> d = (x) => { BindAllData(data, refresh); };
@@ -287,7 +291,7 @@ namespace ImageOfStock
                 bgColor = downBgColor;
                 fgColor = downFgColor;
             }
-            if (!refresh || lvi.SubItems[2].Text == String.Empty || price == double.Parse(lvi.SubItems[2].Text)) { bgColor = equalBgColor; }
+            if (!refresh || lvi.SubItems[3].Text == String.Empty || price == double.Parse(lvi.SubItems[3].Text)) { bgColor = equalBgColor; }
 
             lvi.Text = stockId.Substring(1);
             lvi.SubItems[1].Text = data["name"].ToString();
@@ -399,7 +403,8 @@ namespace ImageOfStock
                 {
                     brush = turnOverBrush;
                 }
-                e.Graphics.DrawString(e.SubItem.Text, e.SubItem.Font, brush, rect, sf);
+                
+                e.Graphics.DrawString(e.SubItem.Text, e.SubItem.Font, brush, rect, sf);    
             }
             //e.DrawText();
         }

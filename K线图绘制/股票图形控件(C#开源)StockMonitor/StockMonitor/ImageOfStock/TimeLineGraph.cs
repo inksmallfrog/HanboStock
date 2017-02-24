@@ -612,7 +612,7 @@ namespace ImageOfStock
                 string ProName = this.slnList.Items[i].SubItems[0].Text;
                 string[] p = this.slnList.Items[i].SubItems[1].Text.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                PointF[] price = new PointF[PointsNumber];
+                PointF[] price = new PointF[resultSetData.Rows.Count];
 
                 //此循环用于得到该N个的Point
                 for (int j = 0; j < price.Length; j++)
@@ -717,7 +717,7 @@ namespace ImageOfStock
 
         public void BindData(DataTable minutsTable, DataRow current){
             slnList.Clear();
-
+            
             resultSetData = minutsTable;
 
             stockName = current["name"].ToString();

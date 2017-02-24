@@ -69,7 +69,7 @@ namespace ImageOfStock
 
         public void BindData(DataRow realtime, DataTable histories, DataTable perbid)
         {
-            titleCode.Text = stockId.Substring(1);
+            titleCode.Text = (stockId.Length == 6) ? stockId : stockId.Substring(1);
             titleName.Text = realtime["name"].ToString();
 
             double dataPrice = double.Parse(realtime["price"].ToString());
@@ -163,7 +163,7 @@ namespace ImageOfStock
             inner.Text = (innerAndOutter[0] / 100).ToString("0");
             outer.Text = (innerAndOutter[1] / 100).ToString("0");
 
-            perbidList.BindData(perbid, realtime);
+            perbidList.BindData(perbid, realtime, -1);
         }
 
         private double CalculateVR(DataRow realtime, DataTable histories)

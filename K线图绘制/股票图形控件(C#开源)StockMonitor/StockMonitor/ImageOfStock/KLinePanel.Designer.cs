@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(kLinePanel));
             this.kLineGraph = new ImageOfStock.KLineGraph();
+            this.macd = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // kLineGraph
@@ -59,11 +61,41 @@
             this.kLineGraph.TimekeyField = null;
             this.kLineGraph.UseScrollAddSpeed = false;
             // 
+            // macd
+            // 
+            this.macd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.macd.Font = new System.Drawing.Font("微软雅黑", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.macd.ForeColor = System.Drawing.Color.Red;
+            this.macd.Location = new System.Drawing.Point(0, 697);
+            this.macd.Name = "macd";
+            this.macd.Size = new System.Drawing.Size(75, 23);
+            this.macd.TabIndex = 1;
+            this.macd.Text = "MACD";
+            this.macd.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.macd.UseVisualStyleBackColor = true;
+            this.macd.Click += new System.EventHandler(this.macd_Click);
+            // 
+            // button1
+            // 
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("微软雅黑", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.button1.ForeColor = System.Drawing.Color.Red;
+            this.button1.Location = new System.Drawing.Point(81, 697);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "KDJ";
+            this.button1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // kLinePanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.macd);
             this.Controls.Add(this.kLineGraph);
             this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -76,5 +108,7 @@
         #endregion
 
         private KLineGraph kLineGraph;
+        private System.Windows.Forms.Button macd;
+        private System.Windows.Forms.Button button1;
     }
 }

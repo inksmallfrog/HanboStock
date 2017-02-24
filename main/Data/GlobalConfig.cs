@@ -44,7 +44,7 @@ namespace Config
 
 
         //=====================================数据配置====================================
-        class StockConfig
+        public class StockConfig
         {
             private static int oldestYear = 1990;
             public static int OldestYear
@@ -52,6 +52,15 @@ namespace Config
                 get
                 {
                     return oldestYear;
+                }
+            }
+
+            private static int perbidListMaxsize = 33;
+            public static int PerbidListMaxsize
+            {
+                get
+                {
+                    return perbidListMaxsize;
                 }
             }
         }
@@ -65,6 +74,24 @@ namespace Config
                 get
                 {
                     return routingReadSize;
+                }
+            }
+
+            private static int realtimeReadTime = 3000;
+            public static int RealtimeReadTime
+            {
+                get
+                {
+                    return realtimeReadTime;
+                }
+            }
+
+            private static int perbidReadTime = 3000;
+            public static int PerbidReadTime
+            {
+                get
+                {
+                    return perbidReadTime;
                 }
             }
         }

@@ -11,63 +11,6 @@ using Config.GlobalConfig;
 
 namespace Dao
 {
-    //public class DataLoader
-    //{
-    //    private static RoutineLoader routineLoader = new RoutineLoader();
-    //    private static SingleLoader singleLoader = new SingleLoader();
-
-    //    public static void InvokeRoutingReader()
-    //    {
-    //        routineLoader.Start();
-    //    }
-
-    //    public static void LoadRealTimeList()
-    //    {
-    //        routineLoader.Load();
-    //    }
-
-    //    public static DataTable GetRealTimeList()
-    //    {
-    //        return routineLoader.RealTimeList;
-    //    }
-
-    //    public static void InvokeSingleLoader(string stockId)
-    //    {
-    //        singleLoader.StockId = stockId;
-    //        singleLoader.Start();
-    //    }
-
-    //    public static void StopSingleLoader()
-    //    {
-    //        singleLoader.Stop();
-    //    }
-
-    //    public static DataTable GetSingleHistories()
-    //    {
-    //        return singleLoader.Histories;
-    //    }
-
-    //    public static DataTable GetSinglePerbid()
-    //    {
-    //        return singleLoader.Perbid;
-    //    }
-
-    //    public static DataTable GetSinglePerminut()
-    //    {
-    //        return singleLoader.Perminut;
-    //    }
-
-    //    public static void InvokeMultipleReader(List<string> stocksId)
-    //    {
-            
-    //    }
-
-    //    public static void StopMultipleReader()
-    //    {
-
-    //    }
-    //}
-
     public class RoutineLoader
     {
         private Timer routineLoadTimer;
@@ -76,7 +19,7 @@ namespace Dao
 
         public RoutineLoader()
         {
-            routineLoadTimer = new Timer(new TimerCallback(ThreadCallBack), null, Timeout.Infinite, 2000);
+            routineLoadTimer = new Timer(new TimerCallback(ThreadCallBack), null, Timeout.Infinite, Config.GlobalConfig.ThreadConfig.RealtimeReadTime);
             isRunning = false;
         }
 
@@ -91,14 +34,18 @@ namespace Dao
             {
                 ReadRealTime();
             }
-
-            if (!WebConfig.ConnectMode)
+            else
             {
                 ReadRealTimeFromDB();
             }
-
-            DBHelper.CleanOldPerbidData(GlobalData.StocksTable.Select("stockId='1000001'")[0]["date"].ToString());
-            routineLoadTimer.Change(3000, 3000);
+            if (WebConfig.ConnectMode)
+            {
+                if (GlobalData.StocksTable.Rows.Count > 0)
+                {
+                    DBHelper.CleanOldPerbidData(GlobalData.StocksTable.Select("stockId='1000001'")[0]["date"].ToString());
+                }
+            }
+            routineLoadTimer.Change(Config.GlobalConfig.ThreadConfig.RealtimeReadTime, Config.GlobalConfig.ThreadConfig.RealtimeReadTime);
         }
 
         public void ReadNow()
@@ -117,7 +64,7 @@ namespace Dao
         public void Stop()
         {
             isRunning = false;
-            routineLoadTimer.Change(Timeout.Infinite, 2000);
+            routineLoadTimer.Change(Timeout.Infinite, Config.GlobalConfig.ThreadConfig.RealtimeReadTime);
         }
 
         public void Load()
@@ -141,10 +88,16 @@ namespace Dao
             if (Config.GlobalConfig.WebConfig.ConnectMode)
             {
                 GlobalData.StocksTable = bufferTable;
-                GlobalData.LastTradeTime = TimeSpan.Parse(bufferTable.Rows[0]["time"].ToString());
-                GlobalData.LastTradeDate = DateTime.Parse(bufferTable.Rows[0]["date"].ToString());
+                if (bufferTable.Rows.Count > 0)
+                {
+                    GlobalData.LastTradeTime = TimeSpan.Parse(bufferTable.Rows[0]["time"].ToString());
+                    GlobalData.LastTradeDate = DateTime.Parse(bufferTable.Rows[0]["date"].ToString());
+                }   
             }
-            
+            else
+            {
+                ReadRealTimeFromDB();
+            }
         }
 
         private void ReadRealTimeFromDB()
@@ -162,6 +115,9 @@ namespace Dao
         private string stockId;
         private bool stockIdChanged;
         private String lastMinutTime;
+        private DataDefine.RealtimeRecord lastRecord;
+        private bool isPerbidSync = false;
+        private List<DataRow> perbidBuffer = new List<DataRow>();
 
         private DataRow current;
         public DataRow Current
@@ -181,14 +137,14 @@ namespace Dao
             }
         }
 
-        private DataTable perbid;
         public DataTable Perbid
         {
             get
             {
-                return perbid;
+                return perbidSync;
             }
         }
+        private DataTable perbidSync;
 
         private DataTable perminut;
         public DataTable Perminut
@@ -207,13 +163,24 @@ namespace Dao
                 {
                     stockId = value;
                     stockIdChanged = true;
+                    isPerbidSync = false;
+                    lastRecord.vol = 0;
+                    perbidBuffer.Clear();
+                    if(perbidSync != null)
+                    {
+                        perbidSync.Clear();
+                    }
+                    if(perminut != null)
+                    {
+                        perminut.Clear();
+                    }
                 }
             }
         }
 
         public SingleLoader()
         {
-            singleLoadTimer = new Timer(new TimerCallback(ThreadCallBack), null, Timeout.Infinite, 2000);
+            singleLoadTimer = new Timer(new TimerCallback(ThreadCallBack), null, Timeout.Infinite, Config.GlobalConfig.ThreadConfig.RealtimeReadTime);
             isRunning = false;
             stockIdChanged = true;
             stockId = "-1";
@@ -232,19 +199,19 @@ namespace Dao
             if (stockIdChanged)
             {
                 perminut.Clear();
-                LoadCurrent();
                 LoadHistory();
                 LoadPerbid();
+                LoadCurrent();
                 LoadPerminut();
                 stockIdChanged = false;
             }
-            singleLoadTimer.Change(6000, 6000);
+            singleLoadTimer.Change(Config.GlobalConfig.ThreadConfig.PerbidReadTime, Config.GlobalConfig.ThreadConfig.PerbidReadTime);
         }
 
         public void Stop()
         {
             isRunning = false;
-            singleLoadTimer.Change(Timeout.Infinite, 2000);
+            singleLoadTimer.Change(Timeout.Infinite, Config.GlobalConfig.ThreadConfig.RealtimeReadTime);
         }
 
         private void ThreadCallBack(Object threadLock)
@@ -253,8 +220,8 @@ namespace Dao
             {
                 return;
             }
-            LoadCurrent();
             LoadPerbid();
+            LoadCurrent();
             LoadPerminut();
         }
 
@@ -263,12 +230,85 @@ namespace Dao
             if (WebConfig.ConnectMode)
             {
                 DataAPIFactory.GetDataAPI(APIConfig.ApiType).GetStockRealTime(current, stockId);
-                GlobalData.LastTradeTime = TimeSpan.Parse(current["time"].ToString());
-                GlobalData.LastTradeDate = DateTime.Parse(current["date"].ToString());
+                try
+                {
+                    GlobalData.LastTradeTime = TimeSpan.Parse(current["time"].ToString());
+                    GlobalData.LastTradeDate = DateTime.Parse(current["date"].ToString());
+                }
+                catch (Exception e)
+                {
+
+                }
             }
             else
             {
                 current = DBHelper.GetStockRealTime(stockId);
+            }
+            if(lastRecord.vol == 0)
+            {
+                lastRecord.vol = int.Parse(current["volume"].ToString());
+                lastRecord.ask = decimal.Parse(current["ask1Price"].ToString());
+                lastRecord.bid = decimal.Parse(current["bid1Price"].ToString());
+            }
+            else if(decimal.Parse(current["volume"].ToString()) != lastRecord.vol)
+            {
+                CalculatePerbid();
+            }
+        }
+
+        private void CalculatePerbid()
+        {
+            DataRow newPerbid = perbidSync.NewRow();
+            newPerbid["date"] = current["date"];
+            newPerbid["time"] = current["time"];
+            newPerbid["price"] = current["price"];
+            newPerbid["vol"] = (decimal.Parse(current["volume"].ToString()) - lastRecord.vol);
+            if(decimal.Parse(current["price"].ToString()) <= lastRecord.bid)
+            {
+                newPerbid["type"] = -1;
+            }
+            else if(decimal.Parse(current["price"].ToString()) >= lastRecord.ask)
+            {
+                newPerbid["type"] = 1;
+            }
+            else
+            {
+                newPerbid["type"] = 0;
+            }
+            if (!isPerbidSync)
+            {
+                perbidBuffer.Add(newPerbid);
+            }
+            else
+            {
+                perbidSync.Rows.Add(newPerbid);
+            }
+            
+            lastRecord.vol = int.Parse(current["volume"].ToString());
+            lastRecord.ask = decimal.Parse(current["ask1Price"].ToString());
+            lastRecord.bid = decimal.Parse(current["bid1Price"].ToString());
+
+            if (!isPerbidSync)
+            {
+                TimeSpan syncTime = TimeSpan.Parse(perbidSync.Rows[perbidSync.Rows.Count - 1]["time"].ToString());
+                TimeSpan currentTime = TimeSpan.Parse(perbidBuffer[0]["time"].ToString());
+                if (syncTime.Add(TimeSpan.Parse("00:00:03")) >= currentTime)
+                {
+                    foreach(DataRow row in perbidBuffer)
+                    {
+                        TimeSpan rowTime = TimeSpan.Parse(row["time"].ToString());
+                        if (rowTime < syncTime.Add(TimeSpan.Parse("00:00:03"))) continue;
+                        DataRow r = perbidSync.NewRow();
+                        r["date"] = row["date"];
+                        r["time"] = row["time"];
+                        r["price"] = row["price"];
+                        r["vol"] = row["vol"];
+                        r["type"] = row["type"];
+                        perbidSync.Rows.Add(r);
+                    }
+                    perbidBuffer.Clear();
+                    isPerbidSync = true;
+                }
             }
         }
 
@@ -279,11 +319,16 @@ namespace Dao
 
         private void LoadPerbid()
         {
-            perbid = DBHelper.GetPerbid(stockId);
+            if (!isPerbidSync)
+            {
+                perbidSync = DBHelper.GetPerbid(stockId);
+            }
         }
 
         private void LoadPerminut()
         {
+            perminut.Clear();
+
             String lastPrice = "0";
             int vol = 0;
 
@@ -296,7 +341,7 @@ namespace Dao
 
             bool hasCaculate = false;
 
-            foreach (DataRow row in perbid.Rows)
+            foreach (DataRow row in perbidSync.Rows)
             {
                 hasCaculate = false;
                 TimeSpan rowTime = TimeSpan.Parse(row["time"].ToString().Substring(0, 5) + ":00");
@@ -326,7 +371,7 @@ namespace Dao
                         perminut.Rows.Add(minutRow);
                     }
 
-                    for (; startTime < rowTime - minut; startTime += minut)
+                    for (; startTime < rowTime - minut && startTime != morningEnd; startTime += minut)
                     {
                         minutRow = perminut.NewRow();
 
@@ -337,6 +382,11 @@ namespace Dao
                         minutRow["vol"] = 0;
 
                         perminut.Rows.Add(minutRow);
+                    }
+                    if(startTime == morningEnd && (rowTime == noonStart))
+                    {
+                        startTime = TimeSpan.Parse("13:00:00");
+                        continue;
                     }
 
                     minutRow = perminut.NewRow();

@@ -23,3 +23,5 @@ E:\Code\C#\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\S
 E:\Code\C#\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Debug\ImageOfStock.DetailPanel.resources
 E:\Code\C#\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Debug\ImageOfStock.KLinePanel.resources
 E:\Code\C#\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Debug\ImageOfStock.SingleGraph.resources
+E:\Code\C#\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Debug\ImageOfStock.AllDetailPanel.resources
+E:\Code\C#\韩波炒股\K线图绘制\股票图形控件(C#开源)StockMonitor\StockMonitor\ImageOfStock\obj\Debug\ImageOfStock.StockSearch.resources

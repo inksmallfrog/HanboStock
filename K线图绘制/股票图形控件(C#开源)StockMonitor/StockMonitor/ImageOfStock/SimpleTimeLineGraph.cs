@@ -43,7 +43,9 @@ namespace ImageOfStock
                 loader.StockId = stockId;
                 loader.Start();
             }
+          
             DataRow current = GlobalData.StocksTable.Select("stockId='" + stockId + "'")[0];
+            
             timeLineGraph.BindData(loader.Perminut, current);
 
             if (InvokeRequired)

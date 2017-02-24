@@ -1,6 +1,5 @@
 E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.csprojResolveAssemblyReference.cache
 E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.MainWindow.resources
-E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.Form2.resources
 E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.Properties.Resources.resources
 E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.csproj.GenerateResource.Cache
 E:\Code\C#\韩波炒股\main\main\bin\Debug\StockMonitor.exe.config
@@ -18,3 +17,4 @@ E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.exe.manifest
 E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.application
 E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.exe
 E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.pdb
+E:\Code\C#\韩波炒股\main\main\obj\Debug\StockMonitor.Formula.resources

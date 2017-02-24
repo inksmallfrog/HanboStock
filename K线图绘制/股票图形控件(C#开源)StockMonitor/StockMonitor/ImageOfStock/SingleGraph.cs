@@ -19,6 +19,7 @@ namespace ImageOfStock
         private String stockId;
         private SingleLoader loader = new SingleLoader();
         private bool isKLineMode = true;
+        private bool isAllPerbid = false;
 
         public String StockId{
             set{
@@ -39,6 +40,17 @@ namespace ImageOfStock
 
             kLinePanel.Draw();
             timeLineGraph.Draw();
+
+            allDetailPanel1.SetMouseWheel(new MouseEventHandler(PerbidMouseWheel));
+        }
+
+        public void Generate()
+        {
+            kLinePanel.Generate();
+        }
+
+        public void BindFormulaBox(TextBox box){
+            kLinePanel.BindFormulaBox(box);
         }
 
         private void StartBackGround()
@@ -50,8 +62,9 @@ namespace ImageOfStock
             BackGround.BackGroundTask perbid;
             perbid.stockId = stockId;
             perbid.taskType = BackGround.TaskType.PerbidTask;
-            perbid.cycleTime = 6000;
+            perbid.cycleTime = Config.GlobalConfig.ThreadConfig.PerbidReadTime;
             BackGround.getBackGround().Execute(history);
+            BackGround.getBackGround().Execute(perbid);
             BackGround.getBackGround().AddTask(perbid);
         }
 
@@ -59,6 +72,28 @@ namespace ImageOfStock
         {
             if (isKLineMode) { ToTimeLineMode(); }
             else { ToKLineMode(); }
+        }
+
+        public void ToggleAllPerbid()
+        {
+            if (!isAllPerbid)
+            {
+                allDetailPanel1.BindData(loader.Perbid, loader.Current);
+                if (isKLineMode) kLinePanel.Hide();
+                else timeLineGraph.Hide();
+                detailPanel.Hide();
+                allDetailPanel1.Show();
+                isAllPerbid = true;
+                Focus();
+            }
+            else
+            {
+                allDetailPanel1.Hide();
+                if (isKLineMode) kLinePanel.Show();
+                else timeLineGraph.Show();
+                detailPanel.Show();
+                isAllPerbid = false;
+            }
         }
         
         public void ToTimeLineMode()
@@ -84,9 +119,30 @@ namespace ImageOfStock
 
         public void BindData()
         {
+            if(isAllPerbid) {
+                allDetailPanel1.BindData(loader.Perbid, loader.Current);
+                return;
+            }
             detailPanel.BindData(loader.Current, loader.Histories, loader.Perbid);
+            Console.WriteLine("Bind " + loader.Perbid.Rows.Count);
             if (isKLineMode) { kLinePanel.BindData(loader.Histories, loader.Current); }
             else { timeLineGraph.BindData(loader.Perminut, loader.Current); }
+        }
+
+        private void PerbidMouseWheel(object sender, MouseEventArgs e)
+        {
+            if (isAllPerbid)
+            {
+                if (e.Delta < 0)
+                {
+                    allDetailPanel1.NextPage(loader.Perbid);
+                }
+                else if (e.Delta > 0)
+                {
+                    allDetailPanel1.LastPage();
+                }
+                allDetailPanel1.BindData(loader.Perbid, loader.Current);
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Dao.DataAPI
             apiType = type;
             switch(type){
                 case APIType.DefaultAPI:
-                    dataAPI = new DefaultDataAPI();
+                    dataAPI = new SinaDataAPI();
                     break;
             }
 

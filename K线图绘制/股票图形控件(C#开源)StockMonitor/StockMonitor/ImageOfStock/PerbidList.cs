@@ -17,7 +17,7 @@ namespace ImageOfStock
     public partial class PerbidList : ListView
     {
         #region 变量
-        private int listMaxSize = 15;
+        private int listMaxSize = 33;
         private int[] headerWidth = null;
 
         private Color upBgColor = Color.Red;
@@ -41,7 +41,11 @@ namespace ImageOfStock
         public int ListMaxSize
         {
             get { return listMaxSize; }
-            set { listMaxSize = value; }
+            set {
+                listMaxSize = value;
+               // lvis = new ListViewItem[listMaxSize];
+               // DrawBody();
+            }
         }
         [CategoryAttribute("大小"), DescriptionAttribute("表头宽度")]
         public int[] HeaderWidth
@@ -150,7 +154,7 @@ namespace ImageOfStock
             }
         }
 
-        public void BindData(DataTable data, DataRow realtime)
+        public void BindData(DataTable data, DataRow realtime, int startPos)
         {
             if (data.Rows.Count == 0)
             {
@@ -158,9 +162,28 @@ namespace ImageOfStock
             }
             int dataLen = data.Rows.Count;
             BeginUpdate();
-            for (int i = 0; i < listMaxSize; ++i)
+            if(startPos == -1)
             {
-                BindRowData(data.Rows[dataLen - i - 1], lvis[i], realtime);
+                for (int i = 0; i < listMaxSize && i < data.Rows.Count; ++i)
+                {
+                    if (data.Rows.Count < listMaxSize){
+                        BindRowData(data.Rows[i], lvis[i], realtime);
+                    }
+                    else
+                    {
+                        BindRowData(data.Rows[dataLen - listMaxSize + i], lvis[i], realtime);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < listMaxSize && i < data.Rows.Count; ++i)
+                {
+                    if(startPos + i < data.Rows.Count)
+                    {
+                        BindRowData(data.Rows[startPos + i], lvis[i], realtime);
+                    }
+                }
             }
             EndUpdate();
         }
@@ -170,7 +193,7 @@ namespace ImageOfStock
             lvi.SubItems[0].Text = data["time"].ToString().Substring(0, 5);
 
             double price = double.Parse(data["price"].ToString());
-            decimal vol = decimal.Parse(data["vol"].ToString()) / 100;
+            double vol = Math.Floor(int.Parse(data["vol"].ToString()) / 100.0 + 0.5);
             int type = int.Parse(data["type"].ToString());
             string typeStr = "";
             double close = double.Parse(realtime["closeP"].ToString());

@@ -28,10 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.allDetailPanel1 = new ImageOfStock.AllDetailPanel();
             this.timeLineGraph = new ImageOfStock.TimeLineGraph();
             this.detailPanel = new ImageOfStock.DetailPanel();
             this.kLinePanel = new ImageOfStock.kLinePanel();
             this.SuspendLayout();
+            // 
+            // allDetailPanel1
+            // 
+            this.allDetailPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.allDetailPanel1.BackColor = System.Drawing.Color.Black;
+            this.allDetailPanel1.Location = new System.Drawing.Point(0, 0);
+            this.allDetailPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.allDetailPanel1.Name = "allDetailPanel1";
+            this.allDetailPanel1.Size = new System.Drawing.Size(1024, 720);
+            this.allDetailPanel1.TabIndex = 0;
+            this.allDetailPanel1.Visible = false;
             // 
             // timeLineGraph
             // 
@@ -68,7 +82,7 @@
             this.timeLineGraph.XYFontY = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.timeLineGraph.XYLineColorX = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.timeLineGraph.XYLineColorY = System.Drawing.Color.FromArgb(((int)(((byte)(176)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.timeLineGraph.XYLineMaxX = 976;
+            this.timeLineGraph.XYLineMaxX = 634;
             this.timeLineGraph.XYLineMaxY = 700;
             this.timeLineGraph.XYLineWidthX = 2;
             this.timeLineGraph.XYLineWidthY = 1;
@@ -83,7 +97,7 @@
             this.detailPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailPanel.BackColor = System.Drawing.Color.Black;
-            this.detailPanel.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.detailPanel.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.detailPanel.ForeColor = System.Drawing.Color.LightGray;
             this.detailPanel.Location = new System.Drawing.Point(724, 0);
             this.detailPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -97,7 +111,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.kLinePanel.BackColor = System.Drawing.Color.Black;
-            this.kLinePanel.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.kLinePanel.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.kLinePanel.Location = new System.Drawing.Point(0, 0);
             this.kLinePanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.kLinePanel.Name = "kLinePanel";
@@ -109,10 +123,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
+            this.Controls.Add(this.allDetailPanel1);
             this.Controls.Add(this.timeLineGraph);
             this.Controls.Add(this.detailPanel);
             this.Controls.Add(this.kLinePanel);
-            this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "SingleGraph";
             this.Size = new System.Drawing.Size(1024, 720);
@@ -125,5 +140,6 @@
         private kLinePanel kLinePanel;
         private DetailPanel detailPanel;
         private TimeLineGraph timeLineGraph;
+        private AllDetailPanel allDetailPanel1;
     }
 }

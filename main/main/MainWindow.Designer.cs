@@ -40,6 +40,7 @@ namespace StockMonitor
             this.singleGraph = new ImageOfStock.SingleGraph();
             this.multiList = new ImageOfStock.MultiList();
             this.stocksList = new ImageOfStock.StocksList();
+            this.stockSearch1 = new ImageOfStock.StockSearch();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,17 +76,21 @@ namespace StockMonitor
             // WindowCloseButton
             // 
             this.WindowCloseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.WindowCloseButton.Location = new System.Drawing.Point(933, 0);
+            this.WindowCloseButton.BackColor = System.Drawing.Color.White;
+            this.WindowCloseButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("WindowCloseButton.BackgroundImage")));
+            this.WindowCloseButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.WindowCloseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.WindowCloseButton.Location = new System.Drawing.Point(993, 0);
             this.WindowCloseButton.Name = "WindowCloseButton";
-            this.WindowCloseButton.Size = new System.Drawing.Size(75, 23);
+            this.WindowCloseButton.Size = new System.Drawing.Size(31, 28);
             this.WindowCloseButton.TabIndex = 2;
-            this.WindowCloseButton.Text = "Close";
-            this.WindowCloseButton.UseVisualStyleBackColor = true;
+            this.WindowCloseButton.UseVisualStyleBackColor = false;
             this.WindowCloseButton.Click += new System.EventHandler(this.WindowCloseButton_Click);
             // 
             // stockFreshTimer
             // 
-            this.stockFreshTimer.Interval = 10000;
+            this.stockFreshTimer.Enabled = true;
+            this.stockFreshTimer.Interval = 3000;
             this.stockFreshTimer.Tick += new System.EventHandler(this.stockFreshTimer_Tick);
             // 
             // singleGraph
@@ -94,7 +99,7 @@ namespace StockMonitor
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.singleGraph.BackColor = System.Drawing.Color.Black;
-            this.singleGraph.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.singleGraph.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.singleGraph.Location = new System.Drawing.Point(0, 28);
             this.singleGraph.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.singleGraph.Name = "singleGraph";
@@ -108,7 +113,7 @@ namespace StockMonitor
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.multiList.BackColor = System.Drawing.Color.Black;
-            this.multiList.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.multiList.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.multiList.ForeColor = System.Drawing.Color.White;
             this.multiList.Location = new System.Drawing.Point(0, 28);
             this.multiList.Margin = new System.Windows.Forms.Padding(0);
@@ -131,7 +136,7 @@ namespace StockMonitor
             this.stocksList.HeaderWidth = null;
             this.stocksList.HideSelection = false;
             this.stocksList.LabelWrap = false;
-            this.stocksList.ListMaxSize = 28;
+            this.stocksList.ListMaxSize = 27;
             this.stocksList.Location = new System.Drawing.Point(0, 28);
             this.stocksList.MultiSelect = false;
             this.stocksList.Name = "stocksList";
@@ -139,10 +144,19 @@ namespace StockMonitor
             this.stocksList.PauseStateId = 4;
             this.stocksList.Scrollable = false;
             this.stocksList.ShowGroups = false;
-            this.stocksList.Size = new System.Drawing.Size(1024, 720);
+            this.stocksList.Size = new System.Drawing.Size(1024, 764);
             this.stocksList.TabIndex = 3;
             this.stocksList.UseCompatibleStateImageBehavior = false;
             this.stocksList.View = System.Windows.Forms.View.Details;
+            // 
+            // stockSearch1
+            // 
+            this.stockSearch1.Location = new System.Drawing.Point(774, 457);
+            this.stockSearch1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.stockSearch1.Name = "stockSearch1";
+            this.stockSearch1.Size = new System.Drawing.Size(250, 300);
+            this.stockSearch1.TabIndex = 6;
+            this.stockSearch1.Visible = false;
             // 
             // MainWindow
             // 
@@ -150,21 +164,21 @@ namespace StockMonitor
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Black;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(1024, 764);
+            this.ClientSize = new System.Drawing.Size(1024, 756);
             this.ControlBox = false;
+            this.Controls.Add(this.stockSearch1);
             this.Controls.Add(this.singleGraph);
             this.Controls.Add(this.multiList);
             this.Controls.Add(this.stocksList);
             this.Controls.Add(this.WindowCloseButton);
             this.Controls.Add(this.menuStrip1);
-            this.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainWindow";
             this.Text = "韩波炒股";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -182,6 +196,7 @@ namespace StockMonitor
         private ImageOfStock.StocksList stocksList;
         private ImageOfStock.MultiList multiList;
         private ImageOfStock.SingleGraph singleGraph;
+        private ImageOfStock.StockSearch stockSearch1;
     }
 }
 

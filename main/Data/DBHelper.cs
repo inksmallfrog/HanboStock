@@ -65,8 +65,8 @@ namespace Dao
                                        "SIZE = 50MB, MAXSIZE = 200MB, FILEGROWTH = 10%) " +
                                        "LOG ON (NAME = {0}_Log, " +
                                        "FILENAME = '{1}\\{0}Log.ldf', " +
-                                       "SIZE = 10MB, " +
-                                       "MAXSIZE = 50MB, " +
+                                       "SIZE = 100MB, " +
+                                       "MAXSIZE = 500MB, " +
                                        "FILEGROWTH = 10%)", 
                                        DBConfig.DBName, DBConfig.DBPath);
             try {
@@ -79,7 +79,7 @@ namespace Dao
             }
         }
 
-        private static void DropDB()
+        public static void DropDB()
         {
             List<string> sqls = new List<string>();
             string sql = "USE MASTER";
@@ -175,6 +175,10 @@ namespace Dao
                 "(stockId DECIMAL(7, 0) REFERENCES stocksCode(stockId) PRIMARY KEY);";
             sqls.Add(sql);
 
+            sql = "CREATE TABLE myFormula " +
+                "(name VARCHAR(36) NOT NULL PRIMARY KEY, formula VARCHAR(1024));";
+            sqls.Add(sql);
+
             try{
                 ExecuteMultipleSql(sqls);
             }
@@ -206,6 +210,7 @@ namespace Dao
             catch (System.IO.FileNotFoundException ex)
             {
                 MessageBox.Show("未找到股票初始信息文件，请确认程序安装完整性！信息：" + ex.Message);
+                DropDB();
                 Application.Exit();
             }
             String line;
@@ -238,9 +243,15 @@ namespace Dao
                     DropDB();
                     Application.Exit();
                 }
+
                 stocksCode.Rows.Add(data);
             }
             InsertIntoStocksCode(stocksCode, conn);
+        }
+
+        private static void InitValiableStocksCode()
+        {
+
         }
 
         private static void InsertIntoStocksCode(DataTable stocks, SqlConnection conn)
@@ -324,7 +335,6 @@ namespace Dao
                         connection.Close();
                         throw e;
                     }
-                    
                 }
             }
         }
@@ -414,7 +424,13 @@ namespace Dao
 
         public static void RemoveStockCode(String stockId)
         {
-            string sql_delete = "DELETE FROM stocksCode WHERE stockId = " + stockId + ";";
+            string sql_delete = "DELETE FROM stocksRealtime WHERE stockId = " + stockId + ";";
+            ExecuteSql(sql_delete);
+            sql_delete = "DELETE FROM stocksHistory WHERE stockId = " + stockId + ";";
+            ExecuteSql(sql_delete);
+            sql_delete = "DELETE FROM stocksPerbid WHERE stockId = " + stockId + ";";
+            ExecuteSql(sql_delete);
+            sql_delete = "DELETE FROM stocksCode WHERE stockId = " + stockId + ";";
             ExecuteSql(sql_delete);
         }
         //------------------------------------------------------------
@@ -514,8 +530,27 @@ namespace Dao
             return result.Tables[0];
         }
 
+        public static DataTable GetFormula()
+        {
+            string sql = "SELECT " +
+                         "name, formula " +
+                         "FROM myFormula;";
+
+            DataSet result = ExecuteSqlGetDataSet(sql);
+
+            return result.Tables[0];
+        }
+
         //--------------------------------------------------------------------
         //写
+        public static void SaveFormula(String name, String formula)
+        {
+            string sql = "INSERT INTO " +
+                        "myFormula(name, formula) " +
+                        "VALUES('" + name + "', '" + formula + "');";
+            ExecuteSql(sql);
+        }
+
         public static void UpdateRealtime(DataTable realtime)
         {
             string sql = "DELETE FROM stocksRealtime;";

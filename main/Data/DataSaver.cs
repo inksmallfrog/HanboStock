@@ -50,10 +50,10 @@ namespace Dao
                 return;
             }
             DataTable stockHistories = DataDefine.GetNewStocksHistoryTable();
-            string newestHistoryInDB = DBHelper.GetNewestHistoryDate(stockId.ToString());
-            int dirtaDay = -1;
+            //string newestHistoryInDB = DBHelper.GetNewestHistoryDate(stockId.ToString());
+            int dirtaDay = 365;
 
-            if (!newestHistoryInDB.Equals(""))
+            /*if (!newestHistoryInDB.Equals(""))
             {
                 DateTime lastHistoryDate = DateTime.Parse(newestHistoryInDB);
 
@@ -62,7 +62,7 @@ namespace Dao
                     return;
                 }
                 dirtaDay = (int)(GlobalData.LastTradeDate - lastHistoryDate).TotalDays;
-            }
+            }*/
             
             DataAPIFactory.GetDataAPI(APIConfig.ApiType).GetHistoriesTable(stockHistories, stockId.ToString(), dirtaDay);
             DBHelper.InsertIntoHistory(stockHistories);
@@ -70,7 +70,10 @@ namespace Dao
 
         public static void SavePerbid(Object stockId)
         {
-
+            if (!Config.GlobalConfig.WebConfig.ConnectMode)
+            {
+                return;
+            }
             DataTable stockPerbid = DataDefine.GetNewStocksPerbidTable();
 
             string newestPeriBidsInDB = DBHelper.GetNewestPerbidTime(stockId.ToString());
@@ -78,7 +81,7 @@ namespace Dao
             TimeSpan newestTimeInDB = TimeSpan.Parse(newestPeriBidsInDB);
             if (newestTimeInDB < TimeSpan.Parse("15:00:00"))
             {
-                int readCount = (int)(TimeSpan.Parse(GlobalData.LastTradeTime.ToString()) - newestTimeInDB).TotalSeconds / 2;
+                int readCount = (int)(TimeSpan.Parse(GlobalData.LastTradeTime.ToString()) - newestTimeInDB).TotalSeconds / 3;
                 if (readCount > 5000)
                 {
                     readCount = -1;
@@ -86,7 +89,6 @@ namespace Dao
                 DataAPIFactory.GetDataAPI(APIConfig.ApiType).GetPerbidTable(stockPerbid, stockId.ToString(), readCount);
 
                 DBHelper.InsertIntoPerbid(stockPerbid);
-
             }
         }
     }
